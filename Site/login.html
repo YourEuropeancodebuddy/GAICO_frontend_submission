@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GAICO - Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body class="login-page">
+
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+  <main>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form onsubmit="event.preventDefault(); login();">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" class="form-button">Log In</button>
+
+        <p class="signup">
+          Don't have an account? <a href="register.html">Create one</a>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("access_token");
+      window.location.href = "index.html";
+    }
+  
+    const authControl = document.getElementById("auth-control");
+    const token = localStorage.getItem("access_token");
+  
+
+    if (token) {
+      authControl.innerHTML = `
+        <button class="login-button" onclick="logout()">Logout</button>`;
+    } else {
+      authControl.innerHTML = `
+        <a href="login.html">
+          <button class="login-button">Login</button>
+        </a>`;
+    }
+  </script>
+  
+
+  <script src="auth.js"></script>
+</body>
+</html>

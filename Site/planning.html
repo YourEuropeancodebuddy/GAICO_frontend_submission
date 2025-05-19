@@ -1,0 +1,674 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICO</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet"> 
+    <title>Project Planning</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+</head>
+<body>
+    <header class="navbar">
+        <a href="index.html" class="logo-container">
+          <img src="assets/logo.png" alt="Logo" class="logo-img" />
+        </a>
+      
+    <div class="top-navbar">
+        <div class="top-left">
+        <input type="text" placeholder="Search..." class="search-bar" />
+        </div>
+    
+        <div class="top-right" id="auth-control"></div>
+
+    </div>
+  
+    <div class="bottom-navbar">
+    <nav class="nav-links">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="List of Projects Icon" class="icon" />
+        Home
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="Dashboard Icon" class="icon" />
+        Dashboard
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="Timeline Icon" class="icon" />
+        Timeline
+      </a>
+      <a href="teams.html">
+        <img src="assets/teams.png" alt="Teams Icon" class="icon" />
+        Teams
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="Projects Icon" class="icon" />
+        New project
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+<body>
+    <div class="container">
+        <h1>Project Planning</h1>
+
+        <!-- Activities Section -->
+        <div class="card" id="activities-card">
+            <div class="card-header">
+                <h2>Project Activities</h2>
+                <button class="btn btn-outline btn-sm" id="toggle-activities-btn">
+                   
+                </button>
+            </div>
+
+            <div class="card-content" id="activities-content">
+                <button class="btn btn-primary" id="add-activity-btn">
+                   
+                    Add New Activity
+                </button>
+
+                <!-- Activity Form -->
+                <div class="form-card hidden" id="activity-form">
+                    <h3 id="activity-form-title">Add New Activity</h3>
+                    <input type="hidden" id="edit-activity-id">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="activity-name">Activity Name *</label>
+                            <input type="text" id="activity-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-duration">Duration (days) *</label>
+                            <input type="number" id="activity-duration" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-cost">Estimated Cost ($)</label>
+                            <input type="number" id="activity-cost" min="0" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="activity-budget">Budget ($)</label>
+                            <input type="number" id="activity-budget" min="0" step="0.01" value="0">
+                        </div>
+                    </div>
+
+                    <div id="activity-error" class="error-message"></div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancel-activity-btn">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="save-activity-btn">Save Activity</button>
+                    </div>
+                </div>
+
+                <!-- Activities List -->
+                <div class="activity-list" id="activities-list">
+                    <p class="text-secondary">Loading activities...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work Packages Section -->
+        <div class="card hidden" id="work-packages-card">
+            <div class="card-header">
+                <h2 id="selected-activity-title">Work Packages</h2>
+            </div>
+
+            <div class="card-content">
+                <button class="btn btn-primary" id="add-work-package-btn">
+                    
+                    Add Work Package
+                </button>
+
+                <!-- Work Package Form -->
+                <div class="form-card hidden" id="work-package-form">
+                    <h3 id="wp-form-title">Add New Work Package</h3>
+                    <input type="hidden" id="edit-work-package-id">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="work-package-name">Work Package Name *</label>
+                            <input type="text" id="work-package-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="work-package-duration">Duration (days) *</label>
+                            <input type="number" id="work-package-duration" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="work-package-cost">Estimated Cost ($)</label>
+                            <input type="number" id="work-package-cost" min="0" step="0.01" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="work-package-budget">Budget ($)</label>
+                            <input type="number" id="work-package-budget" min="0" step="0.01" value="0">
+                        </div>
+                    </div>
+
+                    <div id="wp-error" class="error-message"></div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancel-work-package-btn">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="save-work-package-btn">Save Package</button>
+                    </div>
+                </div>
+
+                <!-- Work Packages Table -->
+                <div class="table-container" id="work-packages-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Work Package</th>
+                                <th>Duration</th>
+                                <th>Est. Cost</th>
+                                <th>Budget</th>
+                                <th class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="work-packages-list">
+                            <tr>
+                                <td colspan="5">No work packages found.</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="totals-row">
+                                <td><strong>Totals:</strong></td>
+                                <td id="total-duration">0 days</td>
+                                <td id="total-cost">$0.00</td>
+                                <td id="total-budget">$0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structure
+        let planningData = {
+            activities: [],
+            currentActivityId: null
+        };
+
+        // DOM Elements
+        const activitiesCard = document.getElementById('activities-card');
+        const toggleActivitiesBtn = document.getElementById('toggle-activities-btn');
+        const activitiesIcon = document.getElementById('activities-icon');
+        const activitiesContent = document.getElementById('activities-content');
+        const addActivityBtn = document.getElementById('add-activity-btn');
+        const activityForm = document.getElementById('activity-form');
+        const activityFormTitle = document.getElementById('activity-form-title');
+        const editActivityId = document.getElementById('edit-activity-id');
+        const activityName = document.getElementById('activity-name');
+        const activityDuration = document.getElementById('activity-duration');
+        const activityCost = document.getElementById('activity-cost');
+        const activityBudget = document.getElementById('activity-budget');
+        const activityError = document.getElementById('activity-error');
+        const cancelActivityBtn = document.getElementById('cancel-activity-btn');
+        const saveActivityBtn = document.getElementById('save-activity-btn');
+        const activitiesList = document.getElementById('activities-list');
+
+        const workPackagesCard = document.getElementById('work-packages-card');
+        const selectedActivityTitle = document.getElementById('selected-activity-title');
+        const addWorkPackageBtn = document.getElementById('add-work-package-btn');
+        const workPackageForm = document.getElementById('work-package-form');
+        const wpFormTitle = document.getElementById('wp-form-title');
+        const editWorkPackageId = document.getElementById('edit-work-package-id');
+        const workPackageName = document.getElementById('work-package-name');
+        const workPackageDuration = document.getElementById('work-package-duration');
+        const workPackageCost = document.getElementById('work-package-cost');
+        const workPackageBudget = document.getElementById('work-package-budget');
+        const wpError = document.getElementById('wp-error');
+        const cancelWorkPackageBtn = document.getElementById('cancel-work-package-btn');
+        const saveWorkPackageBtn = document.getElementById('save-work-package-btn');
+        const workPackagesList = document.getElementById('work-packages-list');
+        const workPackagesTableContainer = document.getElementById('work-packages-table-container');
+        const totalDuration = document.getElementById('total-duration');
+        const totalCost = document.getElementById('total-cost');
+        const totalBudget = document.getElementById('total-budget');
+
+        // Load data from localStorage
+        function loadProjectData() {
+            const storedData = localStorage.getItem('planningData');
+            if (storedData) {
+                planningData = JSON.parse(storedData);
+            } else {
+                // Initialize with sample data
+                planningData = {
+                    activities: [
+                        {
+                            id: 1,
+                            name: "Research Phase",
+                            duration: 14,
+                            cost: 5000,
+                            budget: 6000,
+                            workPackages: [
+                                { id: 1, name: "Literature Review", duration: 7, cost: 2000, budget: 2500 },
+                                { id: 2, name: "Market Analysis", duration: 5, cost: 3000, budget: 3500 }
+                            ]
+                        },
+                        {
+                            id: 2,
+                            name: "Development",
+                            duration: 30,
+                            cost: 15000,
+                            budget: 18000,
+                            workPackages: []
+                        }
+                    ],
+                    currentActivityId: null
+                };
+                saveProjectData();
+            }
+            renderActivities();
+        }
+
+        // Save data to localStorage
+        function saveProjectData() {
+            localStorage.setItem('planningData', JSON.stringify(planningData));
+        }
+
+        // Toggle activities section
+        function toggleActivitiesSection() {
+            const isVisible = activitiesContent.style.display !== 'none';
+            activitiesContent.style.display = isVisible ? 'none' : 'block';
+            activitiesIcon.innerHTML = isVisible 
+                ? '<polyline points="6 9 12 15 18 9"></polyline>' 
+                : '<polyline points="18 15 12 9 6 15"></polyline>';
+        }
+
+        // Show activity form
+        function showActivityForm(activityId = null) {
+            activityError.textContent = '';
+            
+            if (activityId) {
+                // Edit mode
+                const activity = planningData.activities.find(a => a.id === activityId);
+                if (!activity) return;
+                
+                editActivityId.value = activity.id;
+                activityName.value = activity.name;
+                activityDuration.value = activity.duration;
+                activityCost.value = activity.cost;
+                activityBudget.value = activity.budget;
+                activityFormTitle.textContent = 'Edit Activity';
+                saveActivityBtn.textContent = 'Update Activity';
+            } else {
+                // Add mode
+                editActivityId.value = '';
+                activityName.value = '';
+                activityDuration.value = '1';
+                activityCost.value = '0';
+                activityBudget.value = '0';
+                activityFormTitle.textContent = 'Add New Activity';
+                saveActivityBtn.textContent = 'Save Activity';
+            }
+            
+            activityForm.classList.remove('hidden');
+        }
+
+        // Hide activity form
+        function hideActivityForm() {
+            activityForm.classList.add('hidden');
+        }
+
+        // Save activity
+        function saveActivity() {
+            const activityIdInput = editActivityId.value;
+            const name = activityName.value.trim();
+            const duration = parseInt(activityDuration.value);
+            const cost = parseFloat(activityCost.value) || 0;
+            const budget = parseFloat(activityBudget.value) || 0;
+            
+            // Validation
+            if (!name) {
+                activityError.textContent = 'Activity name is required';
+                return;
+            }
+            
+            if (!duration || duration <= 0) {
+                activityError.textContent = 'Duration must be a positive number';
+                return;
+            }
+            
+            if (cost < 0 || budget < 0) {
+                activityError.textContent = 'Cost and budget cannot be negative';
+                return;
+            }
+            
+            if (activityIdInput) {
+                // Update existing activity
+                const activityId = parseInt(activityIdInput);
+                const activityIndex = planningData.activities.findIndex(a => a.id === activityId);
+                
+                if (activityIndex !== -1) {
+                    planningData.activities[activityIndex].name = name;
+                    planningData.activities[activityIndex].duration = duration;
+                    planningData.activities[activityIndex].cost = cost;
+                    planningData.activities[activityIndex].budget = budget;
+                }
+            } else {
+                // Add new activity
+                const newId = planningData.activities.length > 0 
+                    ? Math.max(...planningData.activities.map(a => a.id)) + 1 
+                    : 1;
+                
+                planningData.activities.push({
+                    id: newId,
+                    name: name,
+                    duration: duration,
+                    cost: cost,
+                    budget: budget,
+                    workPackages: []
+                });
+            }
+            
+            saveProjectData();
+            renderActivities();
+            hideActivityForm();
+        }
+
+        // Delete activity
+        function deleteActivity(activityId) {
+            if (confirm('Are you sure you want to delete this activity? All associated work packages will also be deleted.')) {
+                planningData.activities = planningData.activities.filter(a => a.id !== activityId);
+                
+                // If we deleted the currently selected activity, clear it
+                if (planningData.currentActivityId === activityId) {
+                    planningData.currentActivityId = null;
+                    hideWorkPackagesSection();
+                }
+                
+                saveProjectData();
+                renderActivities();
+            }
+        }
+
+        // Render activities list
+        function renderActivities() {
+            if (planningData.activities.length === 0) {
+                activitiesList.innerHTML = '<p>No activities found. Click "Add New Activity" to create one.</p>';
+                return;
+            }
+            
+            activitiesList.innerHTML = '';
+            
+            planningData.activities.forEach(activity => {
+                const wps = activity.workPackages || [];
+                const wpCount = wps.length;
+                
+                const el = document.createElement('div');
+                el.className = 'activity-item' + (activity.id === planningData.currentActivityId ? ' selected' : '');
+                
+                el.innerHTML = `
+                    <div class="activity-header">
+                        <div>
+                            <div class="activity-title">
+                                <h4>${activity.name}</h4>
+                                ${wpCount > 0 ? `<span class="badge">${wpCount} WP</span>` : ''}
+                            </div>
+                            <div class="activity-details">
+                                Duration: ${activity.duration} days | Cost: $${activity.cost.toFixed(2)} | Budget: $${activity.budget.toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="btn btn-outline btn-sm" onclick="editActivity(${activity.id})">
+                               
+                                Edit
+                            </button>
+                            <button class="btn btn-primary btn-sm" onclick="showWorkPackages(${activity.id})">
+                                
+                                Work Packages
+                            </button>
+                            <button class="btn btn-outline btn-sm" onclick="deleteActivity(${activity.id})">
+    
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                activitiesList.appendChild(el);
+            });
+        }
+
+        // Edit activity
+        function editActivity(activityId) {
+            showActivityForm(activityId);
+        }
+
+        // Show work packages
+        function showWorkPackages(activityId) {
+            const activity = planningData.activities.find(a => a.id === activityId);
+            if (!activity) return;
+            
+            planningData.currentActivityId = activityId;
+            selectedActivityTitle.textContent = `${activity.name} - Work Packages`;
+            workPackagesCard.classList.remove('hidden');
+            
+            renderWorkPackages();
+            renderActivities(); // To update the selected state
+            saveProjectData();
+        }
+
+        // Hide work packages section
+        function hideWorkPackagesSection() {
+            workPackagesCard.classList.add('hidden');
+            planningData.currentActivityId = null;
+        }
+
+        // Show work package form
+        function showWorkPackageForm(workPackageId = null) {
+            wpError.textContent = '';
+            
+            if (workPackageId !== null) {
+                // Edit mode
+                const activity = planningData.activities.find(a => a.id === planningData.currentActivityId);
+                if (!activity) return;
+                
+                const wp = activity.workPackages.find(wp => wp.id === workPackageId);
+                if (!wp) return;
+                
+                editWorkPackageId.value = wp.id;
+                workPackageName.value = wp.name;
+                workPackageDuration.value = wp.duration;
+                workPackageCost.value = wp.cost;
+                workPackageBudget.value = wp.budget;
+                wpFormTitle.textContent = 'Edit Work Package';
+                saveWorkPackageBtn.textContent = 'Update Package';
+            } else {
+                // Add mode
+                editWorkPackageId.value = '';
+                workPackageName.value = '';
+                workPackageDuration.value = '1';
+                workPackageCost.value = '0';
+                workPackageBudget.value = '0';
+                wpFormTitle.textContent = 'Add New Work Package';
+                saveWorkPackageBtn.textContent = 'Save Package';
+            }
+            
+            workPackageForm.classList.remove('hidden');
+        }
+
+        // Hide work package form
+        function hideWorkPackageForm() {
+            workPackageForm.classList.add('hidden');
+        }
+
+        // Save work package
+        function saveWorkPackage() {
+            if (!planningData.currentActivityId) {
+                alert('No activity selected');
+                return;
+            }
+            
+            const wpIdInput = editWorkPackageId.value;
+            const name = workPackageName.value.trim();
+            const duration = parseInt(workPackageDuration.value);
+            const cost = parseFloat(workPackageCost.value) || 0;
+            const budget = parseFloat(workPackageBudget.value) || 0;
+            
+            // Validation
+            if (!name) {
+                wpError.textContent = 'Work package name is required';
+                return;
+            }
+            
+            if (!duration || duration <= 0) {
+                wpError.textContent = 'Duration must be a positive number';
+                return;
+            }
+            
+            if (cost < 0 || budget < 0) {
+                wpError.textContent = 'Cost and budget cannot be negative';
+                return;
+            }
+            
+            const activityIndex = planningData.activities.findIndex(a => a.id === planningData.currentActivityId);
+            if (activityIndex === -1) return;
+            
+            if (wpIdInput) {
+                // Update existing work package
+                const wpId = parseInt(wpIdInput);
+                const wpIndex = planningData.activities[activityIndex].workPackages.findIndex(wp => wp.id === wpId);
+                
+                if (wpIndex !== -1) {
+                    planningData.activities[activityIndex].workPackages[wpIndex].name = name;
+                    planningData.activities[activityIndex].workPackages[wpIndex].duration = duration;
+                    planningData.activities[activityIndex].workPackages[wpIndex].cost = cost;
+                    planningData.activities[activityIndex].workPackages[wpIndex].budget = budget;
+                }
+            } else {
+                // Add new work package
+                const workPackages = planningData.activities[activityIndex].workPackages || [];
+                const newId = workPackages.length > 0 
+                    ? Math.max(...workPackages.map(wp => wp.id)) + 1 
+                    : 1;
+                
+                if (!planningData.activities[activityIndex].workPackages) {
+                    planningData.activities[activityIndex].workPackages = [];
+                }
+                
+                planningData.activities[activityIndex].workPackages.push({
+                    id: newId,
+                    name: name,
+                    duration: duration,
+                    cost: cost,
+                    budget: budget
+                });
+            }
+            
+            saveProjectData();
+            renderWorkPackages();
+            hideWorkPackageForm();
+        }
+
+        // Edit work package
+        function editWorkPackage(workPackageId) {
+            showWorkPackageForm(workPackageId);
+        }
+
+        // Delete work package
+        function deleteWorkPackage(workPackageId) {
+            if (!confirm('Are you sure you want to delete this work package?')) {
+                return;
+            }
+            
+            const activityIndex = planningData.activities.findIndex(a => a.id === planningData.currentActivityId);
+            if (activityIndex === -1) return;
+            
+            planningData.activities[activityIndex].workPackages = 
+                planningData.activities[activityIndex].workPackages.filter(wp => wp.id !== workPackageId);
+            
+            saveProjectData();
+            renderWorkPackages();
+            renderActivities(); // Update the WP count badge
+        }
+
+        // Render work packages
+        function renderWorkPackages() {
+            if (!planningData.currentActivityId) return;
+            
+            const activity = planningData.activities.find(a => a.id === planningData.currentActivityId);
+            if (!activity) return;
+            
+            const workPackages = activity.workPackages || [];
+            
+            if (workPackages.length === 0) {
+                workPackagesList.innerHTML = '<tr><td colspan="5">No work packages found. Click "Add Work Package" to create one.</td></tr>';
+                updateWorkPackageTotals(0, 0, 0);
+                return;
+            }
+            
+            workPackagesList.innerHTML = '';
+            let totalDurationVal = 0;
+            let totalCostVal = 0;
+            let totalBudgetVal = 0;
+            
+            workPackages.forEach(wp => {
+                totalDurationVal += wp.duration;
+                totalCostVal += wp.cost;
+                totalBudgetVal += wp.budget;
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${wp.name}</td>
+                    <td>${wp.duration} days</td>
+                    <td>$${wp.cost.toFixed(2)}</td>
+                    <td>$${wp.budget.toFixed(2)}</td>
+                    <td class="text-right">
+                        <button class="btn btn-outline btn-sm" onclick="editWorkPackage(${wp.id})">
+                          
+                            <span class="sr-only">Edit</span>
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="deleteWorkPackage(${wp.id})">
+                           
+                            <span class="sr-only">Delete</span>
+                        </button>
+                    </td>
+                `;
+                
+                workPackagesList.appendChild(row);
+            });
+            
+            updateWorkPackageTotals(totalDurationVal, totalCostVal, totalBudgetVal);
+        }
+
+        // Update work package totals
+        function updateWorkPackageTotals(duration, cost, budget) {
+            totalDuration.textContent = `${duration} days`;
+            totalCost.textContent = `$${cost.toFixed(2)}`;
+            totalBudget.textContent = `$${budget.toFixed(2)}`;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProjectData();
+            
+            // Toggle activities section
+            toggleActivitiesBtn.addEventListener('click', toggleActivitiesSection);
+            
+            // Activity form events
+            addActivityBtn.addEventListener('click', () => showActivityForm());
+            cancelActivityBtn.addEventListener('click', hideActivityForm);
+            saveActivityBtn.addEventListener('click', saveActivity);
+            
+            // Work package form events
+            addWorkPackageBtn.addEventListener('click', () => showWorkPackageForm());
+            cancelWorkPackageBtn.addEventListener('click', hideWorkPackageForm);
+            saveWorkPackageBtn.addEventListener('click', saveWorkPackage);
+        });
+
+        // Global functions for HTML onclick handlers
+        window.editActivity = editActivity;
+        window.deleteActivity = deleteActivity;
+        window.showWorkPackages = showWorkPackages;
+        window.editWorkPackage = editWorkPackage;
+        window.deleteWorkPackage = deleteWorkPackage;
+    </script>
+</body>
+</html>

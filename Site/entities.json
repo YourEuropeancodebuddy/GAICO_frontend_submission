@@ -1,0 +1,52 @@
+{
+  "User": {
+    "fields": ["id", "fullName", "email", "password"],
+    "actions": ["register", "login", "logout", "getCurrentUser"],
+    "relationships": {}
+  },
+  "Project": {
+    "fields": ["id", "name", "description", "startDate", "endDate", "progress", "status", "currentPhase", "lastEdited"],
+    "actions": ["create", "update", "delete", "getAll", "getById", "trackProgress", "logActivity", "notify"],
+    "relationships": {
+      "owner": "User",
+      "team": "Team",
+      "tasks": ["Task"],
+      "notifications": ["Notification"],
+      "activityLog": ["ActivityLog"]
+    }
+  },
+  "Task": {
+    "fields": ["id", "title", "status", "priority", "dueDate", "assigneeId", "projectId"],
+    "actions": ["create", "update", "delete", "assign", "changeStatus", "getByProject"],
+    "relationships": {
+      "assignee": "User",
+      "project": "Project"
+    }
+  },
+  "Team": {
+    "fields": ["id", "name", "productOwner", "productManager"],
+    "actions": ["create", "update", "delete", "getAll", "getById", "assignUser", "removeUser"],
+    "relationships": {
+      "members": ["User"]
+    }
+  },
+  "TimelineEvent": {
+    "fields": ["id", "date", "title", "description"],
+    "actions": ["create", "update", "delete", "getByProject"],
+    "relationships": {}
+  },
+  "Notification": {
+    "fields": ["id", "projectId", "message", "timestamp", "read"],
+    "actions": ["send", "markRead", "getByProject"],
+    "relationships": {
+      "project": "Project"
+    }
+  },
+  "ActivityLog": {
+    "fields": ["id", "projectId", "entry", "timestamp"],
+    "actions": ["append", "getByProject"],
+    "relationships": {
+      "project": "Project"
+    }
+  }
+}

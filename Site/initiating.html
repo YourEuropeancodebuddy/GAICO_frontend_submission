@@ -1,0 +1,619 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Initiating Phase - GAICO</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+  //Add CSRF token meta if your backend uses it
+  <meta name="csrf-token" content="${csrfToken}">
+</head> 
+
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+<body>
+  <div id="app-container">
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="spinner"></div>
+      <p>Loading project data...</p>
+    </div>
+
+    <div id="error-message" class="error-message" role="alert" aria-live="assertive"></div>
+
+    <div class="initiating-content" style="display: none;">
+      <h2>Project Initiating Phase</h2>
+      <h3 id="project-title">Project Charter</h3>
+      <div id="projectCharter" class="project-summary"></div>
+      
+      <div class="phase-sections">
+        <div class="phase-section">
+          <div class="section-header" onclick="toggleSection('charter')" role="button" aria-expanded="false" aria-controls="charter-section">
+            <h3>Project Charter</h3>
+            <span class="toggle-icon" aria-hidden="true">+</span>
+          </div>
+          <div class="section-content" id="charter-section">
+            <form id="charterForm" class="charter-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="charterTitle">Title <span class="required">*</span></label>
+                  <input type="text" id="charterTitle" required aria-required="true">
+                </div>
+                <div class="form-group">
+                  <label for="charterSponsors">Sponsors <span class="required">*</span></label>
+                  <input type="text" id="charterSponsors" required aria-required="true">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="charterObjective">Objective <span class="required">*</span></label>
+                <textarea id="charterObjective" rows="3" required aria-required="true"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="charterDescription">Description <span class="required">*</span></label>
+                <textarea id="charterDescription" rows="5" required aria-required="true"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="charterDeliverables">Deliverables <span class="required">*</span></label>
+                <textarea id="charterDeliverables" rows="3" required aria-required="true" 
+                  placeholder="List key deliverables separated by commas"></textarea>
+              </div>
+              
+              <div class="form-actions">
+                <label class="approve-checkbox">
+                  <input type="checkbox" id="charterApproval">
+                  <span class="checkmark"></span>
+                  Approve this charter
+                </label>
+                <button type="submit" class="btn btn-primary">Save Charter</button>
+                <span id="charter-save-status" class="save-status"></span>
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        <div class="phase-section">
+          <div class="section-header" onclick="toggleSection('stakeholders')" role="button" aria-expanded="false" aria-controls="stakeholders-section">
+            <h3>Stakeholders</h3>
+            <span class="toggle-icon" aria-hidden="true">+</span>
+          </div>
+          <div class="section-content" id="stakeholders-section">
+            <div class="table-container">
+              <div id="stakeholders-loading" class="loading-message">Loading stakeholders...</div>
+              <div id="stakeholders-empty" class="empty-message" style="display:none;">No stakeholders added yet. Add your first stakeholder below.</div>
+              
+              <table class="stakeholder-table" id="stakeholderTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Sponsor</th>
+                    <th>Classification</th>
+                    <th>Contact Information</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  //Rows will be added dynamically -
+                </tbody>
+              </table>
+              
+              <button type="button" class="btn btn-secondary add-stakeholder" id="addStakeholderBtn">
+                + Add Stakeholder
+              </button>
+              
+              <div class="stakeholder-form" id="stakeholderForm" style="display: none;">
+                <h4>Add New Stakeholder</h4>
+                <form id="newStakeholderForm">
+                  <input type="hidden" id="stakeholderId" value="">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="stakeholderName">Sponsor Name <span class="required">*</span></label>
+                      <input type="text" placeholder="Sponsor Name" id="stakeholderName" required aria-required="true">
+                    </div>
+                    <div class="form-group">
+                      <label for="stakeholderClassification">Classification <span class="required">*</span></label>
+                      <select id="stakeholderClassification" required aria-required="true">
+                        <option value="">Select Classification</option>
+                        <option value="Primary">Primary</option>
+                        <option value="Secondary">Secondary</option>
+                        <option value="Internal">Internal</option>
+                        <option value="External">External</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="stakeholderContact">Contact Information <span class="required">*</span></label>
+                    <input type="text" placeholder="Contact Information" id="stakeholderContact" required aria-required="true">
+                  </div>
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary cancel-btn" id="cancelStakeholderBtn">Cancel</button>
+                    <button type="submit" class="btn btn-primary save-btn" id="saveStakeholderBtn">Save</button>
+                    <span id="stakeholder-save-status" class="save-status"></span>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Basic API service for handling requests
+    const ApiService = {
+      baseUrl: '/api',
+      
+      // Get authentication token with fallback
+      getToken() {
+        return sessionStorage.getItem('access_token') || localStorage.getItem('access_token');
+      },
+      
+      // Check if token exists and is valid
+      isAuthenticated() {
+        const token = this.getToken();
+        if (!token) return false;
+        
+        // Basic check - in a real app, you might validate token expiry
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          return payload.exp > Math.floor(Date.now() / 1000);
+        } catch (e) {
+          return false;
+        }
+      },
+      
+      // Headers for API requests
+      getHeaders(includeContent = true) {
+        const headers = {
+          'Authorization': `Bearer ${this.getToken()}`
+        };
+        
+        if (includeContent) {
+          headers['Content-Type'] = 'application/json';
+        }
+        
+        // Add CSRF token if available
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (csrfToken) {
+          headers['X-CSRF-Token'] = csrfToken;
+        }
+        
+        return headers;
+      },
+      
+      // Generic fetch with error handling
+      async fetchWithAuth(endpoint, options = {}) {
+        if (!this.isAuthenticated()) {
+          this.redirectToLogin();
+          return Promise.reject(new Error('Not authenticated'));
+        }
+        
+        try {
+          const response = await fetch(`${this.baseUrl}${endpoint}`, {
+            ...options,
+            headers: {
+              ...this.getHeaders(options.method !== 'GET'),
+              ...options.headers
+            }
+          });
+          
+          // Handle 401 Unauthorized
+          if (response.status === 401) {
+            this.redirectToLogin();
+            throw new Error('Session expired');
+          }
+          
+          // Handle other errors
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Error: ${response.status} ${response.statusText}`);
+          }
+          
+          // Return empty object for 204 No Content
+          if (response.status === 204) {
+            return {};
+          }
+          
+          return await response.json();
+        } catch (error) {
+          console.error('API request failed:', error);
+          showError(error.message || 'Failed to connect to server');
+          throw error;
+        }
+      },
+      
+      // Redirect to login page 
+      redirectToLogin() {
+        sessionStorage.removeItem('access_token');
+        localStorage.removeItem('access_token');
+        window.location.href = 'login.html';
+      }, 
+      
+      
+      // API methods
+      async getProject(projectId) {
+        return this.fetchWithAuth(`/projects/${projectId}`);
+      },
+      
+      async updateProjectCharter(projectId, charterData) {
+        return this.fetchWithAuth(`/projects/${projectId}/charter`, {
+          method: 'PUT',
+          body: JSON.stringify(charterData)
+        });
+      },
+      
+      async getStakeholders(projectId) {
+        return this.fetchWithAuth(`/projects/${projectId}/stakeholders`);
+      },
+      
+      async createStakeholder(projectId, stakeholderData) {
+        return this.fetchWithAuth(`/projects/${projectId}/stakeholders`, {
+          method: 'POST',
+          body: JSON.stringify(stakeholderData)
+        });
+      },
+      
+      async updateStakeholder(projectId, stakeholderId, stakeholderData) {
+        return this.fetchWithAuth(`/projects/${projectId}/stakeholders/${stakeholderId}`, {
+          method: 'PUT',
+          body: JSON.stringify(stakeholderData)
+        });
+      },
+      
+      async deleteStakeholder(projectId, stakeholderId) {
+        return this.fetchWithAuth(`/projects/${projectId}/stakeholders/${stakeholderId}`, {
+          method: 'DELETE'
+        });
+      }
+    };
+    
+    // Helper functions
+    function showLoading() {
+      document.getElementById('loading-overlay').style.display = 'flex';
+    }
+    
+    function hideLoading() {
+      document.getElementById('loading-overlay').style.display = 'none';
+      document.querySelector('.initiating-content').style.display = 'block';
+    }
+    
+    function showError(message, duration = 5000) {
+      const errorEl = document.getElementById('error-message');
+      errorEl.textContent = message;
+      errorEl.style.display = 'block';
+      
+      // Auto hide after duration
+      setTimeout(() => {
+        errorEl.style.display = 'none';
+      }, duration);
+    }
+    
+    function showSuccess(elementId, message, duration = 3000) {
+      const statusEl = document.getElementById(elementId);
+      statusEl.textContent = message;
+      statusEl.className = 'save-status success';
+      
+      // Auto hide after duration
+      setTimeout(() => {
+        statusEl.textContent = '';
+        statusEl.className = 'save-status';
+      }, duration);
+    }
+    
+    // Escape HTML to prevent XSS
+    function escapeHtml(unsafe) {
+      return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+    
+    // Toggle sections
+    function toggleSection(sectionId) {
+      const section = document.getElementById(`${sectionId}-section`);
+      const header = section.previousElementSibling;
+      const icon = header.querySelector('.toggle-icon');
+      
+      const isExpanded = section.classList.toggle('active');
+      icon.textContent = isExpanded ? '−' : '+';
+      header.setAttribute('aria-expanded', isExpanded);
+    }
+    
+    // Get project ID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('id');
+    let currentProject = null;
+    let stakeholdersList = [];
+    
+    // Load project data
+    async function loadProjectData() {
+      if (!projectId) {
+        showError('No project specified');
+        setTimeout(() => {
+          window.location.href = 'projects.html';
+        }, 2000);
+        return;
+      }
+      
+      showLoading();
+      
+      try {
+        currentProject = await ApiService.getProject(projectId);
+        
+        // Update page title with project name
+        document.getElementById('project-title').textContent = currentProject.name || 'Project Charter';
+        
+        // Display project charter summary (sanitized)
+        const chartarEl = document.getElementById('projectCharter');
+        chartarEl.textContent = '';
+        
+        const summaryEl = document.createElement('p');
+        summaryEl.textContent = currentProject.description || 'No charter information available.';
+        chartarEl.appendChild(summaryEl);
+        
+        // Populate form if data exists
+        if (currentProject.charter) {
+          document.getElementById('charterTitle').value = currentProject.charter.title || '';
+          document.getElementById('charterSponsors').value = currentProject.charter.sponsors || '';
+          document.getElementById('charterObjective').value = currentProject.charter.objective || '';
+          document.getElementById('charterDescription').value = currentProject.charter.description || '';
+          document.getElementById('charterDeliverables').value = currentProject.charter.deliverables || '';
+          document.getElementById('charterApproval').checked = currentProject.charter.approved || false;
+        }
+        
+        // Load stakeholders
+        await loadStakeholders();
+        
+        hideLoading();
+      } catch (error) {
+        hideLoading();
+        showError('Error loading project: ' + error.message);
+      }
+    }
+    
+    // Load stakeholders
+    async function loadStakeholders() {
+      try {
+        document.getElementById('stakeholders-loading').style.display = 'block';
+        document.getElementById('stakeholders-empty').style.display = 'none';
+        
+        const tbody = document.querySelector('.stakeholder-table tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+        
+        stakeholdersList = await ApiService.getStakeholders(projectId);
+        
+        if (stakeholdersList.length === 0) {
+          document.getElementById('stakeholders-empty').style.display = 'block';
+        } else {
+          stakeholdersList.forEach((stakeholder, index) => {
+            addStakeholderRow(stakeholder, index);
+          });
+        }
+        
+        document.getElementById('stakeholders-loading').style.display = 'none';
+      } catch (error) {
+        document.getElementById('stakeholders-loading').style.display = 'none';
+        showError('Error loading stakeholders: ' + error.message);
+      }
+    }
+    
+    // Add stakeholder row to table
+    function addStakeholderRow(stakeholder, index) {
+      const tbody = document.querySelector('.stakeholder-table tbody');
+      const row = document.createElement('tr');
+      row.dataset.id = stakeholder.id;
+      
+      row.innerHTML = `
+        <td>${index + 1}</td>
+        <td>${escapeHtml(stakeholder.name || '')}</td>
+        <td>${escapeHtml(stakeholder.classification || '')}</td>
+        <td>${escapeHtml(stakeholder.contact || '')}</td>
+        <td>
+          <button type="button" class="btn-icon edit-btn" aria-label="Edit stakeholder" data-id="${stakeholder.id}">✏️</button>
+          <button type="button" class="btn-icon delete-btn" aria-label="Delete stakeholder" data-id="${stakeholder.id}">🗑️</button>
+        </td>
+      `;
+      
+      tbody.appendChild(row);
+    }
+    
+    // Update stakeholder row
+    function updateStakeholderRow(stakeholder) {
+      const row = document.querySelector(`.stakeholder-table tr[data-id="${stakeholder.id}"]`);
+      if (!row) return;
+      
+      const cells = row.querySelectorAll('td');
+      cells[1].textContent = stakeholder.name;
+      cells[2].textContent = stakeholder.classification;
+      cells[3].textContent = stakeholder.contact;
+    }
+    
+    // Handle charter form submission
+    document.getElementById('charterForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const saveBtn = this.querySelector('button[type="submit"]');
+      const saveStatus = document.getElementById('charter-save-status');
+      
+      saveBtn.disabled = true;
+      saveStatus.textContent = 'Saving...';
+      saveStatus.className = 'save-status saving';
+      
+      const charterData = {
+        title: document.getElementById('charterTitle').value,
+        sponsors: document.getElementById('charterSponsors').value,
+        objective: document.getElementById('charterObjective').value,
+        description: document.getElementById('charterDescription').value,
+        deliverables: document.getElementById('charterDeliverables').value,
+        approved: document.getElementById('charterApproval').checked
+      };
+      
+      try {
+        await ApiService.updateProjectCharter(projectId, charterData);
+        showSuccess('charter-save-status', 'Charter saved successfully');
+        
+        // Update summary
+        const summaryEl = document.getElementById('projectCharter').querySelector('p');
+        if (summaryEl) {
+          summaryEl.textContent = charterData.description;
+        }
+      } catch (error) {
+        saveStatus.textContent = 'Failed to save';
+        saveStatus.className = 'save-status error';
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+    
+    // Handle stakeholder form display
+    document.getElementById('addStakeholderBtn').addEventListener('click', function() {
+      document.getElementById('stakeholderForm').style.display = 'block';
+      document.getElementById('addStakeholderBtn').style.display = 'none';
+      document.getElementById('stakeholderId').value = '';
+      document.getElementById('newStakeholderForm').reset();
+    });
+    
+    document.getElementById('cancelStakeholderBtn').addEventListener('click', function() {
+      document.getElementById('stakeholderForm').style.display = 'none';
+      document.getElementById('addStakeholderBtn').style.display = 'block';
+      document.getElementById('newStakeholderForm').reset();
+    });
+    
+    // Handle stakeholder form submission
+    document.getElementById('newStakeholderForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const saveBtn = document.getElementById('saveStakeholderBtn');
+      const saveStatus = document.getElementById('stakeholder-save-status');
+      
+      saveBtn.disabled = true;
+      saveStatus.textContent = 'Saving...';
+      saveStatus.className = 'save-status saving';
+      
+      const stakeholderData = {
+        name: document.getElementById('stakeholderName').value,
+        classification: document.getElementById('stakeholderClassification').value,
+        contact: document.getElementById('stakeholderContact').value
+      };
+      
+      const stakeholderId = document.getElementById('stakeholderId').value;
+      const isEdit = stakeholderId !== '';
+      
+      try {
+        let savedStakeholder;
+        
+        if (isEdit) {
+          savedStakeholder = await ApiService.updateStakeholder(projectId, stakeholderId, stakeholderData);
+          showSuccess('stakeholder-save-status', 'Stakeholder updated successfully');
+          updateStakeholderRow({...savedStakeholder, id: stakeholderId});
+        } else {
+          savedStakeholder = await ApiService.createStakeholder(projectId, stakeholderData);
+          showSuccess('stakeholder-save-status', 'Stakeholder added successfully');
+          
+          // Update the stakeholders list and refresh the table
+          await loadStakeholders();
+        }
+        
+        // Hide form and show add button
+        document.getElementById('stakeholderForm').style.display = 'none';
+        document.getElementById('addStakeholderBtn').style.display = 'block';
+        document.getElementById('newStakeholderForm').reset();
+      } catch (error) {
+        saveStatus.textContent = 'Failed to save';
+        saveStatus.className = 'save-status error';
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+    
+    // Handle edit and delete stakeholder actions via event delegation
+    document.querySelector('.stakeholder-table tbody').addEventListener('click', async function(e) {
+      // Edit stakeholder
+      if (e.target.classList.contains('edit-btn')) {
+        const stakeholderId = e.target.dataset.id;
+        const stakeholder = stakeholdersList.find(s => s.id == stakeholderId);
+        
+        if (stakeholder) {
+          document.getElementById('stakeholderId').value = stakeholderId;
+          document.getElementById('stakeholderName').value = stakeholder.name;
+          document.getElementById('stakeholderClassification').value = stakeholder.classification;
+          document.getElementById('stakeholderContact').value = stakeholder.contact;
+          
+          document.getElementById('stakeholderForm').style.display = 'block';
+          document.getElementById('addStakeholderBtn').style.display = 'none';
+        }
+      }
+      
+      // Delete stakeholder
+      if (e.target.classList.contains('delete-btn')) {
+        const stakeholderId = e.target.dataset.id;
+        
+        if (confirm('Are you sure you want to delete this stakeholder?')) {
+          try {
+            await ApiService.deleteStakeholder(projectId, stakeholderId);
+            await loadStakeholders();
+          } catch (error) {
+            showError('Failed to delete stakeholder: ' + error.message);
+          }
+        }
+      }
+    });
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check authentication first
+      if (!ApiService.isAuthenticated()) {
+        ApiService.redirectToLogin();
+        return;
+      }
+      
+      loadProjectData();
+      // Open first section by default when data is loaded
+      setTimeout(() => toggleSection('charter'), 500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAICO</title>
+  <link rel="stylesheet" href="style.css"> 
+  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+</head>
+<body>
+  <script>
+    const token = localStorage.getItem("access_token");
+  
+    if (!token) {
+      // Not logged in, redirect to login page
+      window.location.href = "login.html";
+    } else {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Date.now();
+      if (payload.exp * 1000 < now) {
+        // Token expired
+        localStorage.removeItem("access_token");
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+  
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+  <main class="project-container">
+    <!-- Description -->
+    <div class="project-description">
+      <h1>Loading project...</h1>
+      <p id="projectDescription">Please wait while we load the project data.</p>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="project-bottom">
+      <!-- Recent Activity -->
+      <div class="project-activity">
+        <h2>Recent Activity</h2>
+        <ul></ul>
+      </div>
+
+      <!-- Pie Chart -->
+      <div class="project-status-chart">
+        <h2>Project Status</h2>
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <div style="text-align: center; margin: 30px;">
+    <button onclick="deleteProject()" class="login-button" style="background-color: #ef4444; color: white;">
+      Delete This Project
+    </button>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("access_token");
+      window.location.href = "index.html";
+    }
+  
+    const authControl = document.getElementById("auth-control");
+  
+    if (token) {
+      authControl.innerHTML = `
+        <button class="login-button" onclick="logout()">Logout</button>`;
+    } else {
+      authControl.innerHTML = `
+        <a href="login.html">
+          <button class="login-button">Login</button>
+        </a>`;
+    }
+  </script>
+  
+  <script src="project.js"></script>
+</body>
+</html>

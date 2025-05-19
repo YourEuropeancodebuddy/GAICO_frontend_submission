@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICO</title>
+    <link rel="stylesheet" href="style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <script src="timeline.js"></script>
+    
+
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+
+  <!-- Month navigation -->
+  <div class="calendar-controls">
+    <button id="prevMonthBtn">Previous Month</button>
+    <span id="monthLabel"></span> <!-- Month label will be dynamically updated -->
+    <button id="nextMonthBtn">Next Month</button>
+  </div>
+
+  <!-- Calendar grid -->
+  <div class="calendar-container">
+    <div class="calendar-weekdays">
+      <span class="weekday-label">Sun</span>
+      <span class="weekday-label">Mon</span>
+      <span class="weekday-label">Tue</span>
+      <span class="weekday-label">Wed</span>
+      <span class="weekday-label">Thu</span>
+      <span class="weekday-label">Fri</span>
+      <span class="weekday-label">Sat</span>
+    </div>
+    
+    <!-- 31 Cells for 31 days of the month (Initially empty) -->
+    <div class="calendar-grid" id="calendarGrid">
+      <div class="calendar-day-item" id="day1"><div class="date-number">1</div></div>
+      <div class="calendar-day-item" id="day2"><div class="date-number">2</div></div>
+      <div class="calendar-day-item" id="day3"><div class="date-number">3</div></div>
+      <div class="calendar-day-item" id="day4"><div class="date-number">4</div></div>
+      <div class="calendar-day-item" id="day5"><div class="date-number">5</div></div>
+      <div class="calendar-day-item" id="day6"><div class="date-number">6</div></div>
+      <div class="calendar-day-item" id="day7"><div class="date-number">7</div></div>
+      <div class="calendar-day-item" id="day8"><div class="date-number">8</div></div>
+      <div class="calendar-day-item" id="day9"><div class="date-number">9</div></div>
+      <div class="calendar-day-item" id="day10"><div class="date-number">10</div></div>
+      <div class="calendar-day-item" id="day11"><div class="date-number">11</div></div>
+      <div class="calendar-day-item" id="day12"><div class="date-number">12</div></div>
+      <div class="calendar-day-item" id="day13"><div class="date-number">13</div></div>
+      <div class="calendar-day-item" id="day14"><div class="date-number">14</div></div>
+      <div class="calendar-day-item" id="day15"><div class="date-number">15</div></div>
+      <div class="calendar-day-item" id="day16"><div class="date-number">16</div></div>
+      <div class="calendar-day-item" id="day17"><div class="date-number">17</div></div>
+      <div class="calendar-day-item" id="day18"><div class="date-number">18</div></div>
+      <div class="calendar-day-item" id="day19"><div class="date-number">19</div></div>
+      <div class="calendar-day-item" id="day20"><div class="date-number">20</div></div>
+      <div class="calendar-day-item" id="day21"><div class="date-number">21</div></div>
+      <div class="calendar-day-item" id="day22"><div class="date-number">22</div></div>
+      <div class="calendar-day-item" id="day23"><div class="date-number">23</div></div>
+      <div class="calendar-day-item" id="day24"><div class="date-number">24</div></div>
+      <div class="calendar-day-item" id="day25"><div class="date-number">25</div></div>
+      <div class="calendar-day-item" id="day26"><div class="date-number">26</div></div>
+      <div class="calendar-day-item" id="day27"><div class="date-number">27</div></div>
+      <div class="calendar-day-item" id="day28"><div class="date-number">28</div></div>
+      <div class="calendar-day-item" id="day29"><div class="date-number">29</div></div>
+      <div class="calendar-day-item" id="day30"><div class="date-number">30</div></div>
+      <div class="calendar-day-item" id="day31"><div class="date-number">31</div></div>
+    </div>
+  </div>
+
+  <!-- Task Details Hover Popup (Hidden by default) -->
+  <div id="taskDetailsPopup" class="task-details-popup" style="display:none;"></div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("access_token");
+      window.location.href = "index.html";
+    }
+
+    const authControl = document.getElementById("auth-control");
+    if (token) {
+      authControl.innerHTML = `
+        <button class="login-button" onclick="logout()">Logout</button>`;
+    } else {
+      authControl.innerHTML = `
+        <a href="login.html">
+          <button class="login-button">Login</button>
+        </a>`;
+    }
+  </script>
+  </body>
+</html>

@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Charter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="index.html" class="logo-container">
+      <img src="assets/logo.png" alt="Logo" class="logo-img" />
+    </a>
+    <div class="top-navbar">
+      <div class="top-left">
+        <input
+          type="text"
+          class="search-bar"
+          placeholder="Search…"
+          aria-label="Search projects"
+        />
+      </div>
+      <div class="top-right" id="auth-control">
+      </div>
+    </div>
+    <div class="bottom-navbar">
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="projectlisting.html">
+          <img src="assets/projects.png" alt="" class="icon" />
+          <span class="link-text">Home</span>
+        </a>
+        <a href="dashboard.html">
+          <img src="assets/dashboard.png" alt="" class="icon" />
+          <span class="link-text">Dashboard</span>
+        </a>
+        <a href="timeline.html">
+          <img src="assets/timeline.png" alt="" class="icon" />
+          <span class="link-text">Timeline</span>
+        </a>
+        <a href="projects.html">
+          <img src="assets/create.png" alt="" class="icon" />
+          <span class="link-text">New Project</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+  
+  
+    <div class="project-management-container">
+      <aside class="project-phases">
+        <h3>Project Phases</h3>
+        <nav class="phase-nav">
+          <a href="#" class="phase-link active" data-phase="initiating">
+            <span class="phase-number">1</span>
+            Initiating
+          </a>
+          <a href="planning.html" class="phase-link" data-phase="planning">
+            <span class="phase-number">2</span>
+            Planning
+          </a>
+          <a href="executing.html" class="phase-link" data-phase="executing">
+            <span class="phase-number">3</span>
+            Executing
+          </a>
+  
+          <a href="closing.html" class="phase-link" data-phase="closing">
+            <span class="phase-number">5</span>
+            Closing
+          </a>
+        </nav>
+  
+        <div class="project-info">
+          <h4>Project Details</h4>
+          <div id="projectDetails">
+            <p>Loading project details...</p>
+          </div>
+        </div>
+      </aside>
+  
+      <main class="phase-content" id="phaseContent">
+        <div class="phase-header">
+          <h2 id="currentPhaseTitle"></h2>
+        </div>
+  
+        <div id="dynamicContent">
+          <p>Loading content...</p>
+        </div>
+      </main>
+    </div>
+    
+
+        <!-- Login Container (shown when not authenticated) -->
+        <div id="loginContainer" style="display: none;">
+            <div class="login-form-container">
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Project Content (shown when authenticated) -->
+        <div id="dynamicContent">
+            <!-- This will be populated by the JavaScript -->
+        </div>
+        
+        <!-- Project Template -->
+        <template id="projectTemplate">
+            <div class="project-container">
+                <div class="project-header">
+                    <div class="project-info">
+                        <h2>Project ID: <span id="displayProjectId"></span></h2>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn btn-primary edit-btn">Edit Charter</button>
+                        <button class="btn btn-success btn-approve">Approve Charter</button>
+                    </div>
+                </div>
+
+                <div class="approved-banner" style="display: none;">
+                   
+                    <span>Charter Approved</span>
+                </div>
+
+                <div class="charter-section">
+                    <h3>Project Charter</h3>
+                    <form id="charterForm">
+                        <div class="form-group">
+                            <label for="charterTitle" style = "color:black">Title</label>
+                            <input type="text" id="charterTitle" name="title" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="charterSponsors" style = "color:black">Sponsors</label>
+                            <input type="text" id="charterSponsors" name="sponsors" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="charterObjective" style = "color:black">Objective</label>
+                            <textarea id="charterObjective" name="objective" rows="3" readonly></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="charterDescription" style = "color:black">Description</label>
+                            <textarea id="charterDescription" name="description" rows="5" readonly></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="charterDeliverables" style = "color:black">Deliverables</label>
+                            <textarea id="charterDeliverables" name="deliverables" rows="3" readonly></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="stakeholders-section">
+                    <div class="stakeholders-header">
+                        <h3>Stakeholders</h3>
+                        <button class="btn btn-outline add-stakeholder-btn">
+                            Add Stakeholder
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="stakeholders-table">
+                            <thead>
+                                <tr>
+                                    <th>Project ID</th>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Contact</th>
+                                    <th>Influence</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stakeholdersTableBody">
+                                <!-- Stakeholders will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Stakeholder Modal Template - THIS WAS MISSING -->
+        <template id="stakeholderModalTemplate">
+            <div id="stakeholderModal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Add Stakeholder</h3>
+                        <button type="button" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="stakeholderForm">
+                            <input type="hidden" id="stakeholderId">
+                            <div class="form-group">
+                                <label for="stakeholderName">Name</label>
+                                <input type="text" id="stakeholderName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="stakeholderRole">Role</label>
+                                <input type="text" id="stakeholderRole" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="stakeholderContact">Contact</label>
+                                <input type="text" id="stakeholderContact" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="stakeholderInfluence">Influence</label>
+                                <select id="stakeholderInfluence" required>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary cancel-btn">Cancel</button>
+                                <button type="submit" class="btn btn-primary save-btn">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+    <script src="projectcharter.js"></script>
+    <script>
+        // Configuration
+const API_BASE_URL = 'http://localhost:8081/api'; // Change this to your Spring Boot API URL
+const AUTH_TOKEN_KEY = 'access_token'; // Key for storing JWT token in localStorage
+const CHARTER_STATE_KEY = 'charter_state'; // Key for storing charter state
+
+// DOM Elements
+let charterForm;
+let stakeholdersTableBody;
+let editBtn;
+let approveBtn;
+let addStakeholderBtn;
+const dynamicContent = document.getElementById('dynamicContent');
+const loginContainer = document.getElementById('loginContainer');
+const loginForm = document.getElementById('loginForm');
+const logoutBtn = document.getElementById('logoutBtn');
+const currentUserEl = document.getElementById('currentUser');
+
+// State variables
+let projectId = null;
+let charterId = null;
+let isEditing = false;
+let isApproved = false;
+let stakeholders = [];
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', () => {
+    // Get project ID from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    projectId = urlParams.get('id');
+    
+    console.log("Project ID from URL:", projectId);
+    
+    if (!projectId) {
+        displayErrorMessage('Project ID is required. Please specify a project ID in the URL.');
+        return;
+    }
+
+    // Show loading state
+    showLoadingIndicator();
+
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+        showLoginForm();
+        hideLoadingIndicator();
+    } else {
+        // Initialize with persisted data first
+        const persistedState = getPersistedCharterState();
+        if (persistedState && persistedState.projectId === projectId) {
+            charterId = persistedState.charterId;
+            isApproved = persistedState.isApproved;
+        }
+        
+        // Initialize the page
+        initializePage().then(() => {
+            hideLoadingIndicator();
+            // Start periodic data sync
+            setTimeout(syncData, 30000);
+        });
+    }
+
+    // Set up login form event listener
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
+    }
+
+    // Set up logout button event listener
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+
+    // Handle online/offline status
+    window.addEventListener('online', handleOnlineStatus);
+    window.addEventListener('offline', handleOnlineStatus);
+});
+
+// Check if user is authenticated
+function isAuthenticated() {
+    return !!getAuthToken();
+}
+
+// Get the JWT token from localStorage
+function getAuthToken() {
+    return localStorage.getItem(AUTH_TOKEN_KEY);
+}
+
+// Set the JWT token in localStorage
+function setAuthToken(token) {
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+}
+
+// Remove the JWT token from localStorage (logout)
+function removeAuthToken() {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    // Also clear charter state on logout
+    localStorage.removeItem(CHARTER_STATE_KEY);
+}
+
+// Get authorization headers for API requests
+function getAuthHeaders() {
+    const token = getAuthToken();
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+}
+
+// Persist charter state to localStorage
+function persistCharterState() {
+    const state = {
+        projectId,
+        charterId,
+        isApproved,
+        lastUpdated: new Date().toISOString()
+    };
+    localStorage.setItem(CHARTER_STATE_KEY, JSON.stringify(state));
+}
+
+// Get persisted charter state from localStorage
+function getPersistedCharterState() {
+    const data = localStorage.getItem(CHARTER_STATE_KEY);
+    return data ? JSON.parse(data) : null;
+}
+
+// Handle authentication errors
+function handleAuthError() {
+    displayErrorMessage('Your session has expired. Please log in again.');
+    removeAuthToken();
+    showLoginForm();
+}
+
+// Show login form
+function showLoginForm() {
+    if (dynamicContent) {
+        dynamicContent.style.display = 'none';
+    }
+
+    if (loginContainer) {
+        loginContainer.style.display = 'flex';
+    }
+}
+
+// Show loading indicator
+function showLoadingIndicator() {
+    // Remove any existing loader first
+    hideLoadingIndicator();
+    
+    const loader = document.createElement('div');
+    loader.id = 'loadingIndicator';
+    loader.className = 'loading-indicator';
+    loader.innerHTML = `
+        <div class="spinner"></div>
+        <span>Loading project data...</span>
+    `;
+    document.body.appendChild(loader);
+}
+
+// Hide loading indicator
+function hideLoadingIndicator() {
+    const loader = document.getElementById('loadingIndicator');
+    if (loader) {
+        loader.remove();
+    }
+}
+
+// Handle online status changes
+function handleOnlineStatus() {
+    if (navigator.onLine) {
+        displaySuccessMessage('Back online - syncing data');
+        syncData();
+    } else {
+        displayErrorMessage('You are offline - showing cached data');
+    }
+}
+
+// Synchronize data with server
+async function syncData() {
+    try {
+        console.log('Syncing data with server...');
+        await fetchProjectCharter();
+        await fetchStakeholders();
+        persistCharterState();
+    } catch (error) {
+        console.error('Sync error:', error);
+    }
+}
+
+// Handle login form submission
+async function handleLogin(e) {
+    e.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    try {
+        showLoadingIndicator();
+        const success = await login(username, password);
+        
+        if (success) {
+            // Hide login form
+            if (loginContainer) {
+                loginContainer.style.display = 'none';
+            }
+            
+            // Show content
+            if (dynamicContent) {
+                dynamicContent.style.display = 'block';
+            }
+            
+            // Initialize the page
+            await initializePage();
+            
+            // Update user display
+            updateUserDisplay(username);
+        } else {
+            displayErrorMessage('Login failed. Please check your credentials.');
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        displayErrorMessage('Login failed. Please try again.');
+    } finally {
+        hideLoadingIndicator();
+    }
+}
+
+// Handle logout
+function handleLogout() {
+    removeAuthToken();
+    showLoginForm();
+    updateUserDisplay(null);
+}
+
+// Update user display
+function updateUserDisplay(username) {
+    if (currentUserEl) {
+        currentUserEl.textContent = username ? `Welcome, ${username}` : 'Welcome, Guest';
+    }
+}
+
+// Initialize the page
+async function initializePage() {
+    try {
+        // Render project template
+        renderProjectTemplate();
+        
+        // Get DOM elements after template is rendered
+        setupDOMReferences();
+        
+        // Set up event listeners
+        setupEventListeners();
+        
+        // Fetch project charter data
+        await fetchProjectCharter();
+        
+        // Fetch stakeholders
+        await fetchStakeholders();
+        
+        // Update UI based on charter approval status
+        updateUIBasedOnApprovalStatus();
+        
+        // Persist the current state
+        persistCharterState();
+    } catch (error) {
+        console.error('Error initializing page:', error);
+        displayErrorMessage('Failed to load project data. Please try again later.');
+    }
+}
+
+// Setup DOM references after template is rendered
+function setupDOMReferences() {
+    charterForm = document.getElementById('charterForm');
+    stakeholdersTableBody = document.getElementById('stakeholdersTableBody');
+    editBtn = document.querySelector('.edit-btn');
+    approveBtn = document.querySelector('.btn-approve');
+    addStakeholderBtn = document.querySelector('.add-stakeholder-btn');
+}
+
+// Render project template
+function renderProjectTemplate() {
+    if (!dynamicContent) return;
+
+    const template = document.getElementById('projectTemplate');
+    if (!template) return;
+
+    const content = template.content.cloneNode(true);
+
+    // Set project ID
+    const projectIdEl = content.querySelector('#displayProjectId');
+    if (projectIdEl) {
+        projectIdEl.textContent = projectId;
+    }
+
+    // Clear dynamic content and append template
+    dynamicContent.innerHTML = '';
+    dynamicContent.appendChild(content);
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Edit/Save button for charter
+    if (editBtn) {
+        editBtn.addEventListener('click', handleEditSaveCharter);
+    }
+
+    // Approve button for charter
+    if (approveBtn) {
+        approveBtn.addEventListener('click', handleApproveCharter);
+    }
+
+    // Add stakeholder button
+    if (addStakeholderBtn) {
+        addStakeholderBtn.addEventListener('click', showAddStakeholderModal);
+    }
+
+    // Charter form submission
+    if (charterForm) {
+        charterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+        });
+    }
+}
+
+// Fetch project charter data
+async function fetchProjectCharter() {
+    try {
+        console.log("Fetching charter for project ID:", projectId);
+        
+        // Try up to 3 times to fetch the charter
+        let attempts = 0;
+        const maxAttempts = 3;
+        let response;
+        let responseText = "";
+        
+        while (attempts < maxAttempts) {
+            attempts++;
+            
+            try {
+                response = await fetch(`${API_BASE_URL}/charter/project/${projectId}`, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                });
+                
+                // Log detailed response information for debugging
+                console.log(`Attempt ${attempts} - Status: ${response.status}, Status Text: ${response.statusText}`);
+                console.log("Response Headers:", Object.fromEntries([...response.headers.entries()]));
+                
+                // If charter exists (200 OK)
+                if (response.ok) {
+                    // Check if response has content before trying to parse JSON
+                    const contentType = response.headers.get("content-type");
+                    const contentLength = response.headers.get("content-length");
+                    
+                    console.log(`Content-Type: ${contentType}, Content-Length: ${contentLength}`);
+                    
+                    // Clone the response so we can both read the text and parse as JSON if valid
+                    const responseClone = response.clone();
+                    
+                    try {
+                        // Try to get the response as text first for logging
+                        responseText = await responseClone.text();
+                        console.log("Response Text:", responseText);
+                        
+                        // If the response is empty but status is OK, this might be a server issue
+                        if (!responseText || responseText.trim() === "") {
+                            console.warn("Empty response body with status OK");
+                            
+                            // If we have a charterId from localStorage, try to fetch by direct ID
+                            if (charterId) {
+                                console.log("Trying to fetch charter directly by ID:", charterId);
+                                const directResponse = await fetch(`${API_BASE_URL}/charter/${charterId}`, {
+                                    method: 'GET',
+                                    headers: getAuthHeaders()
+                                });
+                                
+                                if (directResponse.ok) {
+                                    const directResponseText = await directResponse.text();
+                                    if (directResponseText && directResponseText.trim() !== "") {
+                                        try {
+                                            const charterData = JSON.parse(directResponseText);
+                                            console.log("Charter data found by direct ID:", charterData);
+                                            
+                                            // Update charter ID and approval status
+                                            charterId = charterData.id;
+                                            isApproved = charterData.approved || false;
+                                            
+                                            // Update form fields with charter data
+                                            updateCharterForm(charterData);
+                                            
+                                            return charterData;
+                                        } catch (jsonError) {
+                                            console.error("Error parsing direct charter JSON:", jsonError);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // If we're on the last attempt and still have an empty response, treat as 404
+                            if (attempts === maxAttempts) {
+                                console.warn("All attempts failed with empty response, treating as 404");
+                                // Proceed to create a new charter (fall through to 404 handling below)
+                                response = { status: 404, ok: false };
+                                break;
+                            }
+                            
+                            // Wait before retrying
+                            await new Promise(resolve => setTimeout(resolve, 1000));
+                            continue; // Try again
+                        }
+                        
+                        // If we have text content, try to parse it as JSON
+                        try {
+                            const charterData = JSON.parse(responseText);
+                            console.log("Charter data found and received:", charterData);
+                            
+                            // Update charter ID and approval status
+                            charterId = charterData.id;
+                            isApproved = charterData.approved || false;
+                            console.log("Charter ID set to:", charterId);
+                            
+                            // Update form fields with charter data
+                            updateCharterForm(charterData);
+                            
+                            // Store in localStorage as backup
+                            localStorage.setItem('charter_backup', JSON.stringify(charterData));
+                            
+                            return charterData;
+                        } catch (jsonError) {
+                            console.error("Error parsing JSON response:", jsonError);
+                            
+                            // Check if we have a backup in localStorage
+                            const backupData = localStorage.getItem('charter_backup');
+                            if (backupData) {
+                                try {
+                                    const charterData = JSON.parse(backupData);
+                                    console.log("Using backup charter data from localStorage:", charterData);
+                                    
+                                    // Update charter ID and approval status
+                                    charterId = charterData.id;
+                                    isApproved = charterData.approved || false;
+                                    
+                                    // Update form fields with charter data
+                                    updateCharterForm(charterData);
+                                    
+                                    // Show warning to user
+                                    displayErrorMessage("Using cached charter data. Server returned invalid data.");
+                                    
+                                    return charterData;
+                                } catch (backupError) {
+                                    console.error("Error parsing backup data:", backupError);
+                                }
+                            }
+                            
+                            // If we're on the last attempt, throw error
+                            if (attempts === maxAttempts) {
+                                throw new Error("Invalid response format from server");
+                            }
+                        }
+                    } catch (textError) {
+                        console.error("Error reading response text:", textError);
+                        
+                        // If we're on the last attempt, throw error
+                        if (attempts === maxAttempts) {
+                            throw new Error("Failed to read response from server");
+                        }
+                    }
+                    
+                    // Wait before retrying
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    continue; // Try again
+                }
+                
+                // If we get here, the response was not OK (not 200)
+                // No need to retry for specific status codes
+                if (response.status === 401 || response.status === 404) {
+                    break;
+                }
+                
+                // For other error status codes, retry if we haven't reached max attempts
+                if (attempts < maxAttempts) {
+                    console.log(`Retrying after error status ${response.status}...`);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    continue;
+                }
+                
+                // If we've reached max attempts, break out of the loop
+                break;
+            } catch (fetchError) {
+                console.error(`Fetch attempt ${attempts} failed:`, fetchError);
+                
+                // If we're on the last attempt, rethrow
+                if (attempts === maxAttempts) {
+                    throw fetchError;
+                }
+                
+                // Wait before retrying
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        }
+        
+        // If charter doesn't exist (404), create a new one
+        if (response.status === 404) {
+            console.log("Charter not found, creating a new one");
+            
+            // Create empty charter data
+            const newCharterData = {
+                projectID: parseInt(projectId),
+                title: '',
+                sponsors: '',
+                objective: '',
+                description: '',
+                deliverables: '',
+                approved: false
+            };
+            
+            // Try to get project details to pre-fill some fields
+            try {
+                const projectResponse = await fetch(`${API_BASE_URL}/projects/${projectId}`, {
+                    method: 'GET',
+                    headers: getAuthHeaders()
+                });
+                
+                if (projectResponse.ok) {
+                    // Check if response has content before trying to parse JSON
+                    const projectResponseText = await projectResponse.text();
+                    if (projectResponseText && projectResponseText.trim() !== "") {
+                        try {
+                            const projectData = JSON.parse(projectResponseText);
+                            newCharterData.title = `Charter for ${projectData.name || 'Project ' + projectId}`;
+                        } catch (jsonError) {
+                            console.warn("Error parsing project data JSON:", jsonError);
+                            // Continue with default title
+                            newCharterData.title = `Charter for Project ${projectId}`;
+                        }
+                    } else {
+                        newCharterData.title = `Charter for Project ${projectId}`;
+                    }
+                } else {
+                    newCharterData.title = `Charter for Project ${projectId}`;
+                }
+            } catch (projectError) {
+                console.warn("Could not fetch project details:", projectError);
+                // Continue with default title
+                newCharterData.title = `Charter for Project ${projectId}`;
+            }
+            
+            // Save the new charter to backend
+            try {
+                showLoadingIndicator();
+                const createResponse = await fetch(`${API_BASE_URL}/charter`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(newCharterData)
+                });
+                
+                if (createResponse.ok) {
+                    // Try to get the response as text first
+                    const createResponseText = await createResponse.text();
+                    if (createResponseText && createResponseText.trim() !== "") {
+                        try {
+                            const createdCharter = JSON.parse(createResponseText);
+                            console.log("New charter created:", createdCharter);
+                            
+                            // Update charter ID and approval status
+                            charterId = createdCharter.id;
+                            isApproved = createdCharter.approved || false;
+                            
+                            // Update form fields with charter data
+                            updateCharterForm(createdCharter);
+                            
+                            // Store in localStorage as backup
+                            localStorage.setItem('charter_backup', JSON.stringify(createdCharter));
+                            
+                            displaySuccessMessage('New charter created for this project');
+                            return createdCharter;
+                        } catch (jsonError) {
+                            console.error("Error parsing created charter JSON:", jsonError);
+                            // If we can't parse the response, still update the UI with what we sent
+                            charterId = null; // We don't know the ID since we couldn't parse the response
+                            isApproved = false;
+                            updateCharterForm(newCharterData);
+                            displaySuccessMessage('Charter created, but there was an issue retrieving the data');
+                            return newCharterData;
+                        }
+                    } else {
+                        // If response is empty, still update the UI with what we sent
+                        console.warn("Created charter response is empty");
+                        charterId = null; // We don't know the ID since we couldn't parse the response
+                        isApproved = false;
+                        updateCharterForm(newCharterData);
+                        displaySuccessMessage('Charter created, but there was an issue retrieving the data');
+                        return newCharterData;
+                    }
+                } else if (createResponse.status === 401) {
+                    handleAuthError();
+                    return null;
+                } else {
+                    throw new Error(`Failed to create new charter: ${createResponse.status} ${createResponse.statusText}`);
+                }
+            } finally {
+                hideLoadingIndicator();
+            }
+        } else if (response.status === 401) {
+            handleAuthError();
+            return null;
+        } else {
+            throw new Error(`Failed to fetch project charter: ${response.status} ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error handling project charter:', error);
+        
+        // Try to use backup data from localStorage if available
+        const backupData = localStorage.getItem('charter_backup');
+        if (backupData) {
+            try {
+                const charterData = JSON.parse(backupData);
+                console.log("Using backup charter data from localStorage after error:", charterData);
+                
+                // Update charter ID and approval status
+                charterId = charterData.id;
+                isApproved = charterData.approved || false;
+                
+                // Update form fields with charter data
+                updateCharterForm(charterData);
+                
+                // Show warning to user
+                displayErrorMessage(`Error loading charter from server: ${error.message}. Using cached data.`);
+                
+                return charterData;
+            } catch (backupError) {
+                console.error("Error parsing backup data:", backupError);
+            }
+        }
+        
+        // Initialize empty form as fallback if no backup is available
+        initializeEmptyCharterForm();
+        
+        // Show error message with retry option
+        displayErrorMessage(`Failed to load or create charter: ${error.message}`);
+        return null;
+    }
+}
+
+// Initialize empty charter form
+function initializeEmptyCharterForm() {
+    charterId = null;
+    isApproved = false;
+    updateCharterForm({
+        title: '',
+        sponsors: '',
+        objective: '',
+        description: '',
+        deliverables: '',
+        approved: false
+    });
+}
+
+// Update charter form fields
+function updateCharterForm(charterData) {
+    document.getElementById('charterTitle').value = charterData.title || '';
+    document.getElementById('charterSponsors').value = charterData.sponsors || '';
+    document.getElementById('charterObjective').value = charterData.objective || '';
+    document.getElementById('charterDescription').value = charterData.description || '';
+    document.getElementById('charterDeliverables').value = charterData.deliverables || '';
+}
+
+// Fetch stakeholders
+async function fetchStakeholders() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/stakeholders/project/${projectId}`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        
+        if (response.status === 401) {
+            handleAuthError();
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch stakeholders');
+        }
+        
+        stakeholders = await response.json();
+        renderStakeholdersTable();
+        return stakeholders;
+    } catch (error) {
+        console.error('Error fetching stakeholders:', error);
+        stakeholders = [];
+        renderStakeholdersTable();
+        return [];
+    }
+}
+
+// Render stakeholders table
+function renderStakeholdersTable() {
+    if (!stakeholdersTableBody) {
+        console.error('Stakeholders table body element not found');
+        return;
+    }
+
+    stakeholdersTableBody.innerHTML = '';
+
+    if (stakeholders.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `<td colspan="6" class="empty-table">No stakeholders found. Click "Add Stakeholder" to add one.</td>`;
+        stakeholdersTableBody.appendChild(emptyRow);
+        return;
+    }
+
+    stakeholders.forEach(stakeholder => {
+        const row = document.createElement('tr');
+        const influenceBadge = getInfluenceBadge(stakeholder.influence);
+        
+        row.innerHTML = `
+            <td>${projectId}</td>
+            <td>${stakeholder.name}</td>
+            <td>${stakeholder.role}</td>
+            <td>${stakeholder.contact}</td>
+            <td>${influenceBadge}</td>
+            <td class="actions">
+                <button type="button" class="edit-stakeholder-btn" data-id="${stakeholder.id}" ${isApproved ? 'disabled' : ''}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                </button>
+                <button type="button" class="delete-stakeholder-btn" data-id="${stakeholder.id}" ${isApproved ? 'disabled' : ''}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+            </td>
+        `;
+        
+        stakeholdersTableBody.appendChild(row);
+    });
+
+    // Add event listeners to edit and delete buttons
+    document.querySelectorAll('.edit-stakeholder-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const stakeholderId = e.currentTarget.getAttribute('data-id');
+            editStakeholder(stakeholderId);
+        });
+    });
+
+    document.querySelectorAll('.delete-stakeholder-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const stakeholderId = e.currentTarget.getAttribute('data-id');
+            deleteStakeholder(stakeholderId);
+        });
+    });
+}
+
+// Get HTML for influence badge
+function getInfluenceBadge(influence) {
+    const influenceMap = {
+        'high': { label: 'High', class: 'badge-high' },
+        'medium': { label: 'Medium', class: 'badge-medium' },
+        'low': { label: 'Low', class: 'badge-low' }
+    };
+
+    const influenceInfo = influenceMap[influence.toLowerCase()] || { label: influence, class: 'badge-medium' };
+    return `<span class="badge ${influenceInfo.class}">${influenceInfo.label}</span>`;
+}
+
+// Update UI based on approval status
+function updateUIBasedOnApprovalStatus() {
+    // Update form fields readonly state
+    const formInputs = charterForm?.querySelectorAll('input, textarea');
+    if (formInputs) {
+        formInputs.forEach(input => {
+            input.readOnly = isApproved || !isEditing;
+        });
+    }
+
+    // Update edit button text
+    if (editBtn) {
+        editBtn.textContent = isEditing ? 'Save Charter' : 'Edit Charter';
+        editBtn.disabled = isApproved;
+    }
+
+    // Update approve button
+    if (approveBtn) {
+        approveBtn.disabled = isApproved;
+    }
+
+    // Update add stakeholder button
+    if (addStakeholderBtn) {
+        addStakeholderBtn.disabled = isApproved;
+    }
+
+    // Update stakeholder action buttons
+    document.querySelectorAll('.edit-stakeholder-btn, .delete-stakeholder-btn').forEach(btn => {
+        btn.disabled = isApproved;
+    });
+
+    // Update approved banner
+    const approvedBanner = document.querySelector('.approved-banner');
+    if (approvedBanner) {
+        approvedBanner.style.display = isApproved ? 'block' : 'none';
+    }
+
+    // Add/remove approved class to form
+    if (charterForm) {
+        if (isApproved) {
+            charterForm.classList.add('approved');
+        } else {
+            charterForm.classList.remove('approved');
+        }
+    }
+}
+
+// Handle edit/save charter button click
+function handleEditSaveCharter() {
+    if (isApproved) return;
+
+    if (isEditing) {
+        saveCharter();
+    } else {
+        isEditing = true;
+        updateUIBasedOnApprovalStatus();
+    }
+}
+
+// Save charter
+async function saveCharter() {
+    if (!validateCharterForm()) return;
+
+    const charterData = {
+        projectID: parseInt(projectId),
+        title: document.getElementById('charterTitle').value,
+        sponsors: document.getElementById('charterSponsors').value,
+        objective: document.getElementById('charterObjective').value,
+        description: document.getElementById('charterDescription').value,
+        deliverables: document.getElementById('charterDeliverables').value,
+        approved: isApproved
+    };
+
+    console.log("Saving charter with data:", charterData);
+    console.log("Current charter ID:", charterId);
+
+    try {
+        showLoadingIndicator();
+        let response;
+        
+        if (charterId) {
+            charterData.id = charterId;
+            response = await fetch(`${API_BASE_URL}/charter/${charterId}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(charterData)
+            });
+        } else {
+            response = await fetch(`${API_BASE_URL}/charter`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(charterData)
+            });
+        }
+        
+        if (response.status === 401) {
+            handleAuthError();
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error(`Failed to save charter: ${response.status}`);
+        }
+        
+        const updatedCharter = await response.json();
+        charterId = updatedCharter.id;
+        isEditing = false;
+        
+        updateUIBasedOnApprovalStatus();
+        persistCharterState();
+        displaySuccessMessage('Charter saved successfully');
+    } catch (error) {
+        console.error('Error saving charter:', error);
+        displayErrorMessage(`Failed to save charter: ${error.message}`);
+    } finally {
+        hideLoadingIndicator();
+    }
+}
+
+// Validate charter form
+function validateCharterForm() {
+    const requiredFields = [
+        { id: 'charterTitle', name: 'Title' },
+        { id: 'charterSponsors', name: 'Sponsors' },
+        { id: 'charterObjective', name: 'Objective' },
+        { id: 'charterDescription', name: 'Description' },
+        { id: 'charterDeliverables', name: 'Deliverables' }
+    ];
+
+    for (const field of requiredFields) {
+        const value = document.getElementById(field.id).value.trim();
+        if (!value) {
+            displayErrorMessage(`${field.name} is required`);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Handle approve charter button click
+async function handleApproveCharter() {
+    if (isApproved) return;
+
+    const confirmed = confirm('Are you sure you want to approve this charter? This action cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+        showLoadingIndicator();
+        
+        if (!charterId) {
+            displayErrorMessage('Cannot approve charter. Please save the charter first.');
+            return;
+        }
+        
+        const response = await fetch(`${API_BASE_URL}/charter/${charterId}`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+        
+        if (response.status === 401) {
+            handleAuthError();
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error('Failed to get charter data');
+        }
+        
+        const charterData = await response.json();
+        charterData.approved = true;
+        
+        const updateResponse = await fetch(`${API_BASE_URL}/charter/${charterId}`, {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(charterData)
+        });
+        
+        if (updateResponse.status === 401) {
+            handleAuthError();
+            return;
+        }
+        
+        if (!updateResponse.ok) {
+            throw new Error('Failed to approve charter');
+        }
+        
+        isApproved = true;
+        isEditing = false;
+        
+        updateUIBasedOnApprovalStatus();
+        persistCharterState();
+        displaySuccessMessage('Charter approved successfully');
+    } catch (error) {
+        console.error('Error approving charter:', error);
+        displayErrorMessage('Failed to approve charter. Please try again.');
+    } finally {
+        hideLoadingIndicator();
+    }
+}
+
+// Show add stakeholder modal
+function showAddStakeholderModal() {
+    if (isApproved) return;
+
+    const template = document.getElementById('stakeholderModalTemplate');
+    if (!template) {
+        console.error('Stakeholder modal template not found');
+        return;
+    }
+
+    const modalContent = template.content.cloneNode(true);
+    const modalContainer = document.createElement('div');
+    modalContainer.className = 'modal-container';
+    modalContainer.appendChild(modalContent);
+    document.body.appendChild(modalContainer);
+
+    const modal = document.getElementById('stakeholderModal');
+    const closeBtn = modal.querySelector('.close-btn');
+    const cancelBtn = modal.querySelector('.cancel-btn');
+    const stakeholderForm = document.getElementById('stakeholderForm');
+
+    // Update modal title
+    const modalTitle = modal.querySelector('.modal-title');
+    if (modalTitle) {
+        modalTitle.textContent = 'Add Stakeholder';
+    }
+
+    // Update save button text
+    const saveBtn = modal.querySelector('.save-btn');
+    if (saveBtn) {
+        saveBtn.textContent = 'Save Stakeholder';
+    }
+
+    // Show modal
+    modal.classList.add('show');
+
+    // Add event listeners
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    stakeholderForm.addEventListener('submit', handleStakeholderFormSubmit);
+
+    // Close modal function
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(modalContainer);
+        }, 300);
+    }
+
+    // Handle form submission
+    async function handleStakeholderFormSubmit(e) {
+        e.preventDefault();
+        
+        const stakeholderData = {
+            projectID: parseInt(projectId),
+            name: document.getElementById('stakeholderName').value,
+            role: document.getElementById('stakeholderRole').value,
+            contact: document.getElementById('stakeholderContact').value,
+            influence: document.getElementById('stakeholderInfluence').value
+        };
+        
+        try {
+            showLoadingIndicator();
+            const response = await fetch(`${API_BASE_URL}/stakeholders`, {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(stakeholderData)
+            });
+            
+            if (response.status === 401) {
+                handleAuthError();
+                return;
+            }
+            
+            if (!response.ok) {
+                throw new Error('Failed to add stakeholder');
+            }
+            
+            closeModal();
+            await fetchStakeholders();
+            displaySuccessMessage('Stakeholder added successfully');
+        } catch (error) {
+            console.error('Error adding stakeholder:', error);
+            displayErrorMessage('Failed to add stakeholder. Please try again.');
+        } finally {
+            hideLoadingIndicator();
+        }
+    }
+}
+
+// Edit stakeholder
+function editStakeholder(stakeholderId) {
+    if (isApproved) return;
+
+    const stakeholder = stakeholders.find(s => s.id == stakeholderId);
+    if (!stakeholder) {
+        displayErrorMessage('Stakeholder not found');
+        return;
+    }
+
+    const template = document.getElementById('stakeholderModalTemplate');
+    if (!template) {
+        console.error('Stakeholder modal template not found');
+        return;
+    }
+
+    const modalContent = template.content.cloneNode(true);
+    const modalContainer = document.createElement('div');
+    modalContainer.className = 'modal-container';
+    modalContainer.appendChild(modalContent);
+    document.body.appendChild(modalContainer);
+
+    const modal = document.getElementById('stakeholderModal');
+    const closeBtn = modal.querySelector('.close-btn');
+    const cancelBtn = modal.querySelector('.cancel-btn');
+    const stakeholderForm = document.getElementById('stakeholderForm');
+
+    // Update modal title
+    const modalTitle = modal.querySelector('.modal-title');
+    if (modalTitle) {
+        modalTitle.textContent = 'Edit Stakeholder';
+    }
+
+    // Update save button text
+    const saveBtn = modal.querySelector('.save-btn');
+    if (saveBtn) {
+        saveBtn.textContent = 'Update Stakeholder';
+    }
+
+    // Set form values
+    document.getElementById('stakeholderId').value = stakeholder.id;
+    document.getElementById('stakeholderName').value = stakeholder.name;
+    document.getElementById('stakeholderRole').value = stakeholder.role;
+    document.getElementById('stakeholderContact').value = stakeholder.contact;
+    document.getElementById('stakeholderInfluence').value = stakeholder.influence.toLowerCase();
+
+    // Show modal
+    modal.classList.add('show');
+
+    // Add event listeners
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    stakeholderForm.addEventListener('submit', handleStakeholderFormSubmit);
+
+    // Close modal function
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(modalContainer);
+        }, 300);
+    }
+
+    // Handle form submission
+    async function handleStakeholderFormSubmit(e) {
+        e.preventDefault();
+        
+        const stakeholderData = {
+            id: parseInt(document.getElementById('stakeholderId').value),
+            projectID: parseInt(projectId),
+            name: document.getElementById('stakeholderName').value,
+            role: document.getElementById('stakeholderRole').value,
+            contact: document.getElementById('stakeholderContact').value,
+            influence: document.getElementById('stakeholderInfluence').value
+        };
+        
+        try {
+            showLoadingIndicator();
+            const response = await fetch(`${API_BASE_URL}/stakeholders/${stakeholderData.id}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(stakeholderData)
+            });
+            
+            if (response.status === 401) {
+                handleAuthError();
+                return;
+            }
+            
+            if (!response.ok) {
+                throw new Error('Failed to update stakeholder');
+            }
+            
+            closeModal();
+            await fetchStakeholders();
+            displaySuccessMessage('Stakeholder updated successfully');
+        } catch (error) {
+            console.error('Error updating stakeholder:', error);
+            displayErrorMessage('Failed to update stakeholder. Please try again.');
+        } finally {
+            hideLoadingIndicator();
+        }
+    }
+}
+
+// Delete stakeholder
+async function deleteStakeholder(stakeholderId) {
+    if (isApproved) return;
+
+    const confirmed = confirm('Are you sure you want to delete this stakeholder?');
+    if (!confirmed) return;
+
+    try {
+        showLoadingIndicator();
+        const response = await fetch(`${API_BASE_URL}/stakeholders/${stakeholderId}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
+        });
+        
+        if (response.status === 401) {
+            handleAuthError();
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete stakeholder');
+        }
+        
+        await fetchStakeholders();
+        displaySuccessMessage('Stakeholder deleted successfully');
+    } catch (error) {
+        console.error('Error deleting stakeholder:', error);
+        displayErrorMessage('Failed to delete stakeholder. Please try again.');
+    } finally {
+        hideLoadingIndicator();
+    }
+}
+
+// Display error message
+function displayErrorMessage(message) {
+    // Remove any existing messages first
+    document.querySelectorAll('.alert-error').forEach(el => el.remove());
+    
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'alert alert-error';
+    errorMessage.innerHTML = `
+        <span>${message}</span>
+        <button class="retry-btn">Retry</button>
+    `;
+    
+    const container = document.querySelector('.container') || document.body;
+    container.prepend(errorMessage);
+    
+    // Add retry functionality
+    errorMessage.querySelector('.retry-btn').addEventListener('click', () => {
+        errorMessage.remove();
+        initializePage();
+    });
+    
+    setTimeout(() => {
+        if (document.body.contains(errorMessage)) {
+            errorMessage.remove();
+        }
+    }, 10000);
+}
+
+// Display success message
+function displaySuccessMessage(message) {
+    // Remove any existing messages first
+    document.querySelectorAll('.alert-success').forEach(el => el.remove());
+    
+    const successMessage = document.createElement('div');
+    successMessage.className = 'alert alert-success';
+    successMessage.textContent = message;
+    
+    const container = document.querySelector('.container') || document.body;
+    container.prepend(successMessage);
+    
+    setTimeout(() => {
+        if (document.body.contains(successMessage)) {
+            successMessage.remove();
+        }
+    }, 5000);
+}
+
+// Login function
+async function login(username, password) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Login failed');
+        }
+        
+        const data = await response.json();
+        
+        if (data.token) {
+            setAuthToken(data.token);
+            return true;
+        }
+        throw new Error('No token received');
+    } catch (error) {
+        console.error('Login error:', error);
+        return false;
+    }
+}
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAICO</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  
+  <script>
+    // Check authentication
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      window.location.href = "login.html";
+    } else {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp * 1000 < Date.now()) {
+        localStorage.removeItem("access_token");
+        alert("Session expired. Please log in again.");
+        window.location.href = "login.html";
+      }
+    }
+  </script>
+
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="main-content">
+  <form class="project-form" onsubmit="createProject(event)">
+    <h2 class="form-title">Create New Project</h2>
+
+    <div class="form-grid">
+      <div class="form-left">
+        <div class="form-group">
+          <label for="project-name" class="form-label">Project Name</label>
+          <input type="text" id="project-name" class="form-control" placeholder="Enter project name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="project-description" class="form-label">Description</label>
+          <textarea id="project-description" class="form-control" placeholder="Detailed project description" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Team Members</label>
+          <div class="team-members-container">
+            <div class="invite-controls">
+              <input type="email" id="teamMemberEmail" class="form-control" placeholder="Enter email address">
+              <button type="button" class="btn btn-add" onclick="addTeamMember()">+ Add</button>
+            </div>
+            <div class="email-tags" id="emailTags"></div>
+            <input type="hidden" id="teamMembers" name="teamMembers">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-right">
+        <div class="form-group">
+          <label for="start-date" class="form-label">Start Date</label>
+          <input type="date" id="start-date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="end-date" class="form-label">Estimated End Date</label>
+          <input type="date" id="end-date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="project-status" class="form-label">Project Status</label>
+          <select id="project-status" class="form-control" required>
+            <option value="">Select status</option>
+            <option value="NOT_STARTED">Not Started</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="CLOSED">Closed</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="project-budget" class="form-label">Budget ($)</label>
+          <input type="number" id="project-budget" class="form-control" placeholder="Enter project budget">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Create Project</button>
+    </div>
+  </form>
+</main>
+
+<script>
+  // Authentication functions
+  function logout() {
+    localStorage.removeItem("access_token");
+    window.location.href = "index.html";
+  }
+
+  // Team member functions (Kept for single entry)
+  function addTeamMember() {
+    const emailInput = document.getElementById('teamMemberEmail');
+    const email = emailInput.value.trim();
+
+    if (!email) return;
+
+    if (!validateEmail(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+
+    addEmailTag(email);
+    emailInput.value = '';
+    updateTeamMembersInput();
+  }
+
+  function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  function addEmailTag(email) {
+    const tagsContainer = document.getElementById('emailTags');
+
+    // Check for duplicates
+    const existingTags = Array.from(tagsContainer.querySelectorAll('.email-tag'));
+    if (existingTags.some(tag => tag.textContent.includes(email))) {
+      alert(`"${email}" is already added`);
+      return;
+    }
+
+    const tag = document.createElement('div');
+    tag.className = 'email-tag';
+    tag.innerHTML = `
+      ${email}
+      <button class="email-tag-remove" onclick="removeEmailTag(this)">×</button>
+    `;
+    tagsContainer.appendChild(tag);
+  }
+
+  function removeEmailTag(button) {
+    button.parentElement.remove();
+    updateTeamMembersInput();
+  }
+
+  function updateTeamMembersInput() {
+    const tags = document.querySelectorAll('.email-tag');
+    const emails = Array.from(tags).map(tag =>
+      tag.textContent.replace('×', '').trim()
+    );
+    document.getElementById('teamMembers').value = emails.join(',');
+  }
+
+  // Removed: Modal functions (openInviteModal, closeInviteModal, processBulkInvite)
+
+  // Form submission
+  async function createProject(event) {
+    event.preventDefault();
+
+    if (!token) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    const project = {
+      name: document.getElementById('project-name').value,
+      description: document.getElementById('project-description').value,
+      startDate: new Date(document.getElementById('start-date').value).toISOString(),
+      endDate: new Date(document.getElementById('end-date').value).toISOString(),
+      category: document.getElementById('project-status').value,
+      budget: parseFloat(document.getElementById('project-budget').value) || 0,
+      teamMembers: document.getElementById('teamMembers').value.split(',').filter(Boolean)
+    };
+
+    try {
+      const response = await fetch('http://localhost:8081/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(project)
+      });
+
+      if (response.ok) {
+        alert('Project created successfully!');
+        window.location.href = 'projectlisting.html';
+      } else {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create project');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error.message || 'An error occurred while creating the project');
+    }
+  }
+
+  // Add Enter key support for email input
+  document.getElementById('teamMemberEmail').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTeamMember();
+    }
+  });
+  
+    function logout() {
+      localStorage.removeItem("access_token");
+      window.location.href = "index.html";
+    }
+  
+    const authControl = document.getElementById("auth-control");
+  
+    if (token) {
+      authControl.innerHTML = `
+        <button class="login-button" onclick="logout()">Logout</button>`;
+    } else {
+      authControl.innerHTML = `
+        <a href="login.html">
+          <button class="login-button">Login</button>
+        </a>`;
+    }
+</script>
+</body>
+</html>

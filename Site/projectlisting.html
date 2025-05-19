@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GAICO Projects</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <div class="projects-header">
+    <h1>Projects</h1>
+    <a href="projects.html" class="btn-create-project">
+      + Create New Project
+    </a>
+  </div>
+
+  <div class="projects-table-container">
+    <table class="projects-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Project Manager</th>
+          <th>Description</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="projectsList">
+        <!-- Projects will be loaded here -->
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+  <script>
+    
+    // projectlisting.js integrated logic
+
+    // Replace with your actual backend API URL
+    const API_BASE_URL = "http://localhost:8081/api/projects/getProjects";
+
+    let projectsListContainer = null; // Initialize explicitly to null
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("DOMContentLoaded fired."); // Log to confirm event runs
+      projectsListContainer = document.getElementById('projectsList'); // Attempt to get the element
+
+      // === Check immediately if the element was found ===
+      if (!projectsListContainer) {
+        console.error("FATAL ERROR: Element with ID 'projectsList' not found in the DOM upon loading.");
+        alert("Required page element not found. Cannot display projects.");
+        const tableContainer = document.querySelector('.projects-table-container');
+        if (tableContainer) {
+          tableContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error: Cannot find the area to display projects. Please check the page structure.</p>';
+        }
+        return; // Stop execution if the essential element is missing
+      } else {
+        console.log("Element #projectsList found successfully.");
+        // Set initial loading state - ONLY if container IS found
+        projectsListContainer.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading projects...</td></tr>';
+      }
+      // ==================================================
+
+      // Check if user is logged in
+      const token = localStorage.getItem("access_token");
+      if (!token) {
+        console.warn("No access token found, redirecting to login.");
+        // window.location.href = "login.html";
+        // return; // Stop execution if not logged in
+      }
+
+      // Fetch and render projects
+      fetchProjects();
+
+      // Adjust table container height on resize
+      window.addEventListener('resize', adjustTableHeight);
+      adjustTableHeight(); // Call initially to set height on page load
+    });
+
+    /**
+     * Fetches project data from the backend API.
+     */
+    async function fetchProjects() {
+      const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        console.error("Token missing during fetchProjects call.");
+        if (projectsListContainer) {
+          projectsListContainer.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Authentication failed. Please log in.</td></tr>';
+        }
+        alert("Authentication failed. Please log in again.");
+        // window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (!response.ok) {
+          let errorDetail = `Status: ${response.status}`;
+          try {
+            const errorData = await response.json();
+            errorDetail = errorData.message || JSON.stringify(errorData);
+            console.error('Failed to fetch projects (API Error):', response.status, errorData);
+          } catch (e) {
+            errorDetail = response.statusText;
+            console.error('Failed to fetch projects (Non-JSON Error):', response.status, response.statusText);
+          }
+
+          if (projectsListContainer) {
+            projectsListContainer.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Failed to load projects: ${errorDetail}</td></tr>`;
+          }
+          alert(`Failed to load projects: ${errorDetail}`);
+          if (response.status === 401) {
+            console.warn("Token expired or invalid, redirecting to login.");
+            localStorage.removeItem("access_token");
+            // window.location.href = "login.html";
+          }
+          return;
+        }
+
+        const projects = await response.json();
+        console.log("Successfully fetched projects:", projects);
+        renderProjects(projects);
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+        if (projectsListContainer) {
+          projectsListContainer.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Error connecting to the server. Please try again later.</td></tr>';
+        }
+        alert('Failed to load projects. Please check your network connection and try again later.');
+      }
+    }
+
+    /**
+     * Renders the list of projects into the table body.
+     * @param {Array<Object>} projects - An array of project objects.
+     */
+    function renderProjects(projects) {
+      if (!projectsListContainer) {
+        console.error("Assertion failed: projectsListContainer is null in renderProjects.");
+        projectsListContainer = document.getElementById('projectsList');
+        if (!projectsListContainer) {
+          console.error("Fallback: Still couldn't find #projectsList.");
+          return;
+        } else {
+          console.warn("Fallback: Found #projectsList during render.");
+        }
+      }
+
+      projectsListContainer.innerHTML = ''; // Clear existing content
+
+      if (!projects || projects.length === 0) {
+        projectsListContainer.innerHTML = '<tr><td colspan="7" style="text-align: center;">No projects found.</td></tr>';
+        return;
+      }
+
+      projects.forEach(project => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>
+            <a href="projectmanagement.html?id=${project.id}" class="project-link">
+              ${project.name || 'N/A'}
+            </a>
+          </td>
+          <td>${project.owner.fullName || 'N/A'}</td>
+          <td>${project.description || 'N/A'}</td>
+          <td>${project.startDate || 'N/A'}</td>
+          <td>${project.endDate || 'N/A'}</td>
+          <td>${project.category || 'N/A'}</td>
+        `;
+        projectsListContainer.appendChild(row);
+      });
+    }
+
+    function adjustTableHeight() {
+      // Placeholder for your existing adjustTableHeight logic
+    }
+
+    async function fetchUserProfile() {
+      // Placeholder for your existing fetchUserProfile logic
+      return null;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Management - GAICO</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+  <title>Initiating Phase</title>
+</head>
+<body>
+    
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+  <div class="top-navbar">
+    <div class="top-left">
+      <input
+        type="text"
+        class="search-bar"
+        placeholder="Search…"
+        aria-label="Search projects"
+      />
+    </div>
+    <div class="top-right" id="auth-control">
+    </div>
+  </div>
+  <div class="bottom-navbar">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="projectlisting.html">
+        <img src="assets/projects.png" alt="" class="icon" />
+        <span class="link-text">Home</span>
+      </a>
+      <a href="dashboard.html">
+        <img src="assets/dashboard.png" alt="" class="icon" />
+        <span class="link-text">Dashboard</span>
+      </a>
+      <a href="timeline.html">
+        <img src="assets/timeline.png" alt="" class="icon" />
+        <span class="link-text">Timeline</span>
+      </a>
+      <a href="projects.html">
+        <img src="assets/create.png" alt="" class="icon" />
+        <span class="link-text">New Project</span>
+      </a>
+    </nav>
+  </div>
+</header>
+<div class="container">
+    <h1>Project Execution</h1>
+
+    <div id="localStorage-warning" class="alert alert-warning hidden">
+      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+        <path d="M12 9v4"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+      <p>Local storage is not available. Your changes will not be saved between sessions.</p>
+    </div>
+
+    <div id="no-activities-warning" class="alert alert-info hidden">
+      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+        <path d="M12 9v4"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+      <p>No activities found. Please create activities in the planning page first.</p>
+    </div>
+
+    <div class="grid">
+      <!-- Activities Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+            </svg>
+            Project Activities
+          </h2>
+          <button class="btn btn-outline btn-sm" id="export-all-btn">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <path d="M16 13H8"></path>
+              <path d="M16 17H8"></path>
+              <path d="M10 9H8"></path>
+            </svg>
+            Export All
+          </button>
+        </div>
+        <div class="card-content">
+          <div class="activity-list" id="activities-list">
+            <!-- Activities will be loaded here -->
+            <p>Loading activities...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Work Packages Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title" id="work-packages-title">Work Packages</h2>
+          <button class="btn btn-outline btn-sm hidden" id="export-btn">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export
+          </button>
+        </div>
+        <div class="card-content">
+          <div id="no-activity-selected" class="text-center">
+            Select an activity to view its work packages
+          </div>
+          <div id="no-work-packages" class="text-center hidden">
+            No work packages found for this activity
+          </div>
+          <table id="work-packages-table" class="hidden">
+            <thead>
+              <tr>
+                <th>Work Package</th>
+                <th>Duration</th>
+                <th>Est. Cost</th>
+                <th>Budget</th>
+                <th>Files</th>
+              </tr>
+            </thead>
+            <tbody id="work-packages-list">
+              <!-- Work packages will be loaded here -->
+            </tbody>
+            <tfoot>
+              <tr class="totals-row">
+                <td><strong>Totals:</strong></td>
+                <td id="total-duration">0 days</td>
+                <td id="total-cost">$0.00</td>
+                <td id="total-budget">$0.00</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Upload Modal -->
+  <div class="modal-backdrop" id="file-upload-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="file-upload-title">Upload Files</h3>
+      </div>
+      <div class="modal-content">
+        <div class="file-upload">
+          <label for="file-upload-input" class="file-upload-label">Select Files</label>
+          <input type="file" id="file-upload-input" class="file-upload-input" multiple>
+          <p class="file-upload-help">You can select multiple files. Maximum file size: 10MB per file.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-upload-btn">Cancel</button>
+        <button class="btn btn-primary" id="confirm-upload-btn">Upload</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Files Modal -->
+  <div class="modal-backdrop" id="view-files-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="view-files-title">Files</h3>
+      </div>
+      <div class="modal-content">
+        <div class="file-list" id="file-list">
+          <!-- Files will be loaded here -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="close-files-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal-backdrop" id="delete-confirmation-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Delete File</h3>
+      </div>
+      <div class="modal-content">
+        <p id="delete-confirmation-message">Are you sure you want to delete this file? This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancel-delete-btn">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    // Global variables
+    let activities = [];
+    let selectedActivity = null;
+    let workPackages = [];
+    let currentWorkPackage = null;
+    let fileToDelete = null;
+    let fileContents = {}; // Store file contents for download
+
+    // DOM Elements
+    const activitiesList = document.getElementById('activities-list');
+    const workPackagesTitle = document.getElementById('work-packages-title');
+    const workPackagesTable = document.getElementById('work-packages-table');
+    const workPackagesList = document.getElementById('work-packages-list');
+    const noActivitySelected = document.getElementById('no-activity-selected');
+    const noWorkPackages = document.getElementById('no-work-packages');
+    const totalDuration = document.getElementById('total-duration');
+    const totalCost = document.getElementById('total-cost');
+    const totalBudget = document.getElementById('total-budget');
+    const exportBtn = document.getElementById('export-btn');
+    const exportAllBtn = document.getElementById('export-all-btn');
+    const localStorageWarning = document.getElementById('localStorage-warning');
+    const noActivitiesWarning = document.getElementById('no-activities-warning');
+
+    // Modal Elements
+    const fileUploadModal = document.getElementById('file-upload-modal');
+    const fileUploadTitle = document.getElementById('file-upload-title');
+    const fileUploadInput = document.getElementById('file-upload-input');
+    const cancelUploadBtn = document.getElementById('cancel-upload-btn');
+    const confirmUploadBtn = document.getElementById('confirm-upload-btn');
+
+    const viewFilesModal = document.getElementById('view-files-modal');
+    const viewFilesTitle = document.getElementById('view-files-title');
+    const fileList = document.getElementById('file-list');
+    const closeFilesBtn = document.getElementById('close-files-btn');
+
+    const deleteConfirmationModal = document.getElementById('delete-confirmation-modal');
+    const deleteConfirmationMessage = document.getElementById('delete-confirmation-message');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+    // Check if localStorage is available
+    function isLocalStorageAvailable() {
+      try {
+        const testKey = '__test__';
+        localStorage.setItem(testKey, testKey);
+        localStorage.removeItem(testKey);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // Show toast notification
+    function showToast(title, description, type = 'default') {
+      const toastContainer = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      
+      if (type === 'error') {
+        toast.style.borderLeft = '4px solid var(--error-color)';
+      } else if (type === 'success') {
+        toast.style.borderLeft = '4px solid var(--success-color)';
+      }
+      
+      toast.innerHTML = `
+        <div class="toast-title">${title}</div>
+        <div class="toast-description">${description}</div>
+      `;
+      
+      toastContainer.appendChild(toast);
+      
+      // Remove toast after 5 seconds
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+          toastContainer.removeChild(toast);
+        }, 300);
+      }, 5000);
+    }
+
+    // Load activities from localStorage
+    function loadActivities() {
+      if (!isLocalStorageAvailable()) {
+        localStorageWarning.classList.remove('hidden');
+        return;
+      }
+      
+      try {
+        const storedData = localStorage.getItem('planningData');
+        if (storedData) {
+          const planningData = JSON.parse(storedData);
+          activities = planningData.activities || [];
+          renderActivities();
+        } else {
+          activities = [];
+          noActivitiesWarning.classList.remove('hidden');
+          activitiesList.innerHTML = '<p>No activities found.</p>';
+        }
+      } catch (error) {
+        console.error('Error loading activities from localStorage:', error);
+        showToast('Error Loading Activities', 'Could not load activities from storage.', 'error');
+      }
+    }
+
+    // Render activities list
+    function renderActivities() {
+      if (activities.length === 0) {
+        activitiesList.innerHTML = '<p>No activities found.</p>';
+        noActivitiesWarning.classList.remove('hidden');
+        return;
+      }
+      
+      noActivitiesWarning.classList.add('hidden');
+      
+      activitiesList.innerHTML = '';
+      
+      activities.forEach(activity => {
+        const wps = activity.workPackages || [];
+        const wpCount = wps.length;
+        
+        const el = document.createElement('div');
+        el.className = 'activity-item' + (selectedActivity && selectedActivity.id === activity.id ? ' selected' : '');
+        
+        el.innerHTML = `
+          <div class="activity-title">
+            <h4>${activity.name}</h4>
+            ${wpCount > 0 ? `<span class="badge">${wpCount} WP</span>` : ''}
+          </div>
+          <div class="activity-details">
+            Duration: ${activity.duration} days | Cost: $${activity.cost.toFixed(2)} | Budget: $${activity.budget.toFixed(2)}
+          </div>
+        `;
+        
+        el.addEventListener('click', () => selectActivity(activity));
+        
+        activitiesList.appendChild(el);
+      });
+    }
+
+    // Select an activity and show its work packages
+    function selectActivity(activity) {
+      selectedActivity = activity;
+      renderActivities(); // Re-render to update selected state
+      
+      // Update UI
+      workPackagesTitle.textContent = `${activity.name} - Work Packages`;
+      exportBtn.classList.remove('hidden');
+      noActivitySelected.classList.add('hidden');
+      
+      // Load work packages
+      workPackages = activity.workPackages || [];
+      renderWorkPackages();
+    }
+
+    // Render work packages
+    function renderWorkPackages() {
+      if (workPackages.length === 0) {
+        noWorkPackages.classList.remove('hidden');
+        workPackagesTable.classList.add('hidden');
+        return;
+      }
+      
+      noWorkPackages.classList.add('hidden');
+      workPackagesTable.classList.remove('hidden');
+      
+      workPackagesList.innerHTML = '';
+      let totalDurationVal = 0;
+      let totalCostVal = 0;
+      let totalBudgetVal = 0;
+      
+      workPackages.forEach(wp => {
+        totalDurationVal += wp.duration || 0;
+        totalCostVal += wp.cost || 0;
+        totalBudgetVal += wp.budget || 0;
+        
+        // Get files for this work package
+        const files = getWorkPackageFiles(wp.id);
+        const fileCount = files.length;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${wp.name}</td>
+          <td>${wp.duration} days</td>
+          <td>$${(wp.cost || 0).toFixed(2)}</td>
+          <td>$${(wp.budget || 0).toFixed(2)}</td>
+          <td>
+            <div class="wp-files">
+              <div class="wp-files-header">
+                <span class="wp-files-count">${fileCount} files</span>
+                <div class="file-actions">
+                  <button class="btn btn-outline btn-sm upload-files-btn" data-wp-id="${wp.id}">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                  </button>
+                  ${fileCount > 0 ? `
+                    <button class="btn btn-outline btn-sm view-files-btn" data-wp-id="${wp.id}">
+                      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                      </svg>
+                    </button>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          </td>
+        `;
+        
+        workPackagesList.appendChild(row);
+      });
+      
+      // Update totals
+      totalDuration.textContent = `${totalDurationVal} days`;
+      totalCost.textContent = `$${totalCostVal.toFixed(2)}`;
+      totalBudget.textContent = `$${totalBudgetVal.toFixed(2)}`;
+      
+      // Add event listeners
+      document.querySelectorAll('.upload-files-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const wpId = parseInt(btn.dataset.wpId);
+          showFileUploadModal(wpId);
+        });
+      });
+      
+      document.querySelectorAll('.view-files-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const wpId = parseInt(btn.dataset.wpId);
+          showViewFilesModal(wpId);
+        });
+      });
+    }
+
+    // Get files for a work package
+    function getWorkPackageFiles(workPackageId) {
+      if (!isLocalStorageAvailable()) {
+        return [];
+      }
+      
+      try {
+        const storedFiles = localStorage.getItem(`workPackageFiles_${workPackageId}`);
+        return storedFiles ? JSON.parse(storedFiles) : [];
+      } catch (error) {
+        console.error('Error loading files from localStorage:', error);
+        return [];
+      }
+    }
+
+    // Save files for a work package
+    function saveWorkPackageFiles(workPackageId, files) {
+      if (!isLocalStorageAvailable()) {
+        return false;
+      }
+      
+      try {
+        localStorage.setItem(`workPackageFiles_${workPackageId}`, JSON.stringify(files));
+        return true;
+      } catch (error) {
+        console.error('Error saving files to localStorage:', error);
+        return false;
+      }
+    }
+
+    // Show file upload modal
+    function showFileUploadModal(workPackageId) {
+      const workPackage = workPackages.find(wp => wp.id === workPackageId);
+      if (!workPackage) return;
+      
+      currentWorkPackage = workPackage;
+      fileUploadTitle.textContent = `Upload Files for ${workPackage.name}`;
+      fileUploadInput.value = ''; // Clear previous selection
+      
+      fileUploadModal.classList.add('open');
+    }
+
+    // Hide file upload modal
+    function hideFileUploadModal() {
+      fileUploadModal.classList.remove('open');
+      currentWorkPackage = null;
+    }
+
+    // Show view files modal
+    function showViewFilesModal(workPackageId) {
+      const workPackage = workPackages.find(wp => wp.id === workPackageId);
+      if (!workPackage) return;
+      
+      currentWorkPackage = workPackage;
+      viewFilesTitle.textContent = `Files for ${workPackage.name}`;
+      
+      // Get files for this work package
+      const files = getWorkPackageFiles(workPackageId);
+      
+      // Render files
+      if (files.length === 0) {
+        fileList.innerHTML = '<p>No files found for this work package.</p>';
+      } else {
+        fileList.innerHTML = '';
+        
+        files.forEach(file => {
+          const fileItem = document.createElement('div');
+          fileItem.className = 'file-item';
+          
+          fileItem.innerHTML = `
+            <div class="file-name">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
+              ${file.name}
+            </div>
+            <div class="file-actions">
+              <a href="#" class="download-link" data-file-id="${file.id}">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download
+              </a>
+              <button class="btn btn-outline btn-sm delete-file-btn" data-file-id="${file.id}">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; color: var(--error-color);">
+                  <path d="M3 6h18"></path>
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Delete
+              </button>
+            </div>
+          `;
+          
+          fileList.appendChild(fileItem);
+        });
+        
+        // Add event listeners for delete buttons
+        document.querySelectorAll('.delete-file-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const fileId = btn.dataset.fileId;
+            showDeleteConfirmationModal(fileId);
+          });
+        });
+
+        // Add event listeners for download links
+        document.querySelectorAll('.download-link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const fileId = link.dataset.fileId;
+            downloadFile(fileId);
+          });
+        });
+      }
+      
+      viewFilesModal.classList.add('open');
+    }
+
+    // Hide view files modal
+    function hideViewFilesModal() {
+      viewFilesModal.classList.remove('open');
+      currentWorkPackage = null;
+    }
+
+    // Show delete confirmation modal
+    function showDeleteConfirmationModal(fileId) {
+      if (!currentWorkPackage) return;
+      
+      const files = getWorkPackageFiles(currentWorkPackage.id);
+      const file = files.find(f => f.id === fileId);
+      
+      if (!file) {
+        showToast('Error', 'File not found.', 'error');
+        return;
+      }
+      
+      fileToDelete = fileId;
+      deleteConfirmationMessage.textContent = `Are you sure you want to delete "${file.name}"? This action cannot be undone.`;
+      deleteConfirmationModal.classList.add('open');
+    }
+
+    // Hide delete confirmation modal
+    function hideDeleteConfirmationModal() {
+      deleteConfirmationModal.classList.remove('open');
+      fileToDelete = null;
+    }
+
+    // Download file
+    function downloadFile(fileId) {
+      if (!currentWorkPackage) return;
+      
+      const files = getWorkPackageFiles(currentWorkPackage.id);
+      const file = files.find(f => f.id === fileId);
+      
+      if (!file) {
+        showToast('Download Failed', 'File not found.', 'error');
+        return;
+      }
+      
+      // Get file content from storage
+      const fileContent = fileContents[fileId];
+      
+      if (fileContent) {
+        // Create a blob from the file content
+        const blob = new Blob([fileContent], { type: file.type || 'application/octet-stream' });
+        
+        // Create a download link
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 0);
+        
+        showToast('Download Started', `Downloading ${file.name}`, 'success');
+      } else {
+        // If we don't have the content, create a dummy file for demonstration
+        const dummyContent = `This is a dummy file content for ${file.name}.\nIn a real application, this would be the actual file content.`;
+        const blob = new Blob([dummyContent], { type: 'text/plain' });
+        
+        // Create a download link
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 0);
+        
+        showToast('Download Started', `Downloading ${file.name} (demo content)`, 'success');
+      }
+    }
+
+    // Handle file upload
+    function handleFileUpload() {
+      if (!currentWorkPackage) {
+        hideFileUploadModal();
+        return;
+      }
+      
+      const files = Array.from(fileUploadInput.files);
+      if (files.length === 0) {
+        showToast('No Files Selected', 'Please select at least one file to upload.', 'error');
+        return;
+      }
+      
+      // Get existing files
+      const existingFiles = getWorkPackageFiles(currentWorkPackage.id);
+      
+      // Create file objects and store file contents
+      const newFiles = [];
+      const fileReadPromises = [];
+      
+      files.forEach(file => {
+        const fileId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        newFiles.push({
+          id: fileId,
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          dateAdded: new Date().toISOString()
+        });
+        
+        // Read file content and store it
+        const fileReadPromise = new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            fileContents[fileId] = e.target.result;
+            resolve();
+          };
+          reader.readAsArrayBuffer(file);
+        });
+        
+        fileReadPromises.push(fileReadPromise);
+      });
+      
+      // Wait for all files to be read
+      Promise.all(fileReadPromises).then(() => {
+        // Combine existing and new files
+        const updatedFiles = [...existingFiles, ...newFiles];
+        
+        // Save to localStorage
+        if (saveWorkPackageFiles(currentWorkPackage.id, updatedFiles)) {
+          showToast('Files Uploaded', `${files.length} file(s) have been uploaded successfully.`, 'success');
+        } else {
+          showToast('Upload Failed', 'Could not save files to storage.', 'error');
+        }
+        
+        // Hide modal and refresh UI
+        hideFileUploadModal();
+        renderWorkPackages();
+      });
+    }
+
+    // Delete file
+    function deleteFile() {
+      if (!currentWorkPackage || !fileToDelete) {
+        hideDeleteConfirmationModal();
+        return;
+      }
+      
+      // Get existing files
+      const existingFiles = getWorkPackageFiles(currentWorkPackage.id);
+      const fileToDeleteObj = existingFiles.find(file => file.id === fileToDelete);
+      
+      // Filter out the file to delete
+      const updatedFiles = existingFiles.filter(file => file.id !== fileToDelete);
+      
+      // Remove file content from storage
+      delete fileContents[fileToDelete];
+      
+      // Save to localStorage
+      if (saveWorkPackageFiles(currentWorkPackage.id, updatedFiles)) {
+        showToast('File Deleted', `"${fileToDeleteObj ? fileToDeleteObj.name : 'File'}" has been deleted successfully.`, 'success');
+      } else {
+        showToast('Delete Failed', 'Could not update storage after deletion.', 'error');
+      }
+      
+      // Hide modal and refresh UI
+      hideDeleteConfirmationModal();
+      showViewFilesModal(currentWorkPackage.id); // Refresh the files modal
+      renderWorkPackages(); // Update the file count in the table
+    }
+
+    // Export current activity's work packages to Excel
+    function exportToExcel() {
+      if (!selectedActivity) {
+        showToast('Export Failed', 'No activity selected.', 'error');
+        return;
+      }
+      
+      const data = [];
+      
+      // Add work packages
+      workPackages.forEach(wp => {
+        const files = getWorkPackageFiles(wp.id);
+        
+        data.push({
+          "Work Package": wp.name,
+          "Duration (days)": wp.duration,
+          "Estimated Cost ($)": wp.cost,
+          "Budget ($)": wp.budget,
+          "Files Count": files.length
+        });
+      });
+      
+      if (data.length === 0) {
+        showToast('Export Failed', 'No work packages to export.', 'error');
+        return;
+      }
+      
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Work Packages");
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, `${selectedActivity.name} - Work Packages.xlsx`);
+      
+      showToast('Export Successful', 'Work packages have been exported to Excel.', 'success');
+    }
+
+    // Export all activities and work packages to Excel
+    function exportAllToExcel() {
+      if (activities.length === 0) {
+        showToast('Export Failed', 'No activities to export.', 'error');
+        return;
+      }
+      
+      const data = [];
+      
+      // Add all activities and their work packages
+      activities.forEach(activity => {
+        const activityWorkPackages = activity.workPackages || [];
+        
+        if (activityWorkPackages.length === 0) {
+          // Include the activity even if it has no work packages
+          data.push({
+            "Activity": activity.name,
+            "Work Package": "",
+            "Duration (days)": "",
+            "Estimated Cost ($)": "",
+            "Budget ($)": "",
+            "Files Count": ""
+          });
+        } else {
+          // Include each work package with its activity
+          activityWorkPackages.forEach(wp => {
+            const files = getWorkPackageFiles(wp.id);
+            
+            data.push({
+              "Activity": activity.name,
+              "Work Package": wp.name,
+              "Duration (days)": wp.duration,
+              "Estimated Cost ($)": wp.cost,
+              "Budget ($)": wp.budget,
+              "Files Count": files.length
+            });
+          });
+        }
+      });
+      
+      // Create worksheet
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Activities and Work Packages");
+      
+      // Generate Excel file and trigger download
+      XLSX.writeFile(workbook, "All Activities and Work Packages.xlsx");
+      
+      showToast('Export Successful', 'All activities and work packages have been exported to Excel.', 'success');
+    }
+
+    // Add sample data for demonstration
+    function addSampleData() {
+      if (!isLocalStorageAvailable()) return;
+      
+      // Check if data already exists
+      const storedData = localStorage.getItem('planningData');
+      if (storedData) return;
+      
+      const sampleData = {
+        activities: [
+          {
+            id: 1,
+            name: "Website Redesign",
+            duration: 30,
+            cost: 5000,
+            budget: 6000,
+            workPackages: [
+              {
+                id: 101,
+                name: "UI Design",
+                duration: 10,
+                cost: 2000,
+                budget: 2500
+              },
+              {
+                id: 102,
+                name: "Frontend Development",
+                duration: 15,
+                cost: 2500,
+                budget: 3000
+              },
+              {
+                id: 103,
+                name: "Testing",
+                duration: 5,
+                cost: 500,
+                budget: 500
+              }
+            ]
+          },
+          {
+            id: 2,
+            name: "Mobile App Development",
+            duration: 45,
+            cost: 8000,
+            budget: 10000,
+            workPackages: [
+              {
+                id: 201,
+                name: "App Design",
+                duration: 12,
+                cost: 2500,
+                budget: 3000
+              },
+              {
+                id: 202,
+                name: "iOS Development",
+                duration: 20,
+                cost: 3000,
+                budget: 4000
+              },
+              {
+                id: 203,
+                name: "Android Development",
+                duration: 20,
+                cost: 3000,
+                budget: 4000
+              }
+            ]
+          }
+        ]
+      };
+      
+      localStorage.setItem('planningData', JSON.stringify(sampleData));
+      
+      // Add sample files
+      const sampleFiles = [
+        {
+          id: "file-1",
+          name: "design-mockup.pdf",
+          size: 1024 * 1024 * 2.5,
+          type: "application/pdf",
+          dateAdded: new Date().toISOString()
+        },
+        {
+          id: "file-2",
+          name: "requirements.docx",
+          size: 1024 * 512,
+          type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          dateAdded: new Date().toISOString()
+        }
+      ];
+      
+      localStorage.setItem('workPackageFiles_101', JSON.stringify(sampleFiles));
+      
+      const sampleFiles2 = [
+        {
+          id: "file-3",
+          name: "code-review.txt",
+          size: 1024 * 10,
+          type: "text/plain",
+          dateAdded: new Date().toISOString()
+        }
+      ];
+      
+      localStorage.setItem('workPackageFiles_102', JSON.stringify(sampleFiles2));
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add sample data for demonstration
+      addSampleData();
+      
+      // Load activities
+      loadActivities();
+      
+      // Export buttons
+      exportBtn.addEventListener('click', exportToExcel);
+      exportAllBtn.addEventListener('click', exportAllToExcel);
+      
+      // File upload modal
+      cancelUploadBtn.addEventListener('click', hideFileUploadModal);
+      confirmUploadBtn.addEventListener('click', handleFileUpload);
+      
+      // View files modal
+      closeFilesBtn.addEventListener('click', hideViewFilesModal);
+      
+      // Delete confirmation modal
+      cancelDeleteBtn.addEventListener('click', hideDeleteConfirmationModal);
+      confirmDeleteBtn.addEventListener('click', deleteFile);
+    });
+  </script>
+</body>
+</html>

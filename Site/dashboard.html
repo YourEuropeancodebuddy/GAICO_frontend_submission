@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAICO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet"> 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <title>Task Dashboard</title>
+</head>
+<body>
+<header class="navbar">
+  <a href="index.html" class="logo-container">
+    <img src="assets/logo.png" alt="Logo" class="logo-img" />
+  </a>
+
+<div class="top-navbar">
+  <div class="top-left">
+  <input type="text" placeholder="Search..." class="search-bar" />
+  </div>
+
+  <div class="top-right" id="auth-control"></div>
+
+</div>
+
+<div class="bottom-navbar">
+<nav class="nav-links">
+<a href="projectlisting.html">
+  <img src="assets/projects.png" alt="List of Projects Icon" class="icon" />
+  Home
+</a>
+<a href="dashboard.html">
+  <img src="assets/dashboard.png" alt="Dashboard Icon" class="icon" />
+  Dashboard
+</a>
+<a href="timeline.html">
+  <img src="assets/timeline.png" alt="Timeline Icon" class="icon" />
+  Timeline
+</a>
+
+<a href="projects.html">
+  <img src="assets/create.png" alt="Projects Icon" class="icon" />
+  New project
+</a>
+</nav>
+</div>
+</header>
+
+
+  <div class="container">
+    <header>
+      <h1>Task Dashboard</h1>
+      <div class="date-display" id="current-date">Loading...</div>
+    </header>
+ 
+    <div class="stats-grid" id="stats-container">
+      <!-- Stats will be populated by JavaScript -->
+    </div>
+ 
+    <div class="dashboard-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Task Status Distribution</h3>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" id="view-status-btn">View All</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="statusPieChart"></canvas>
+        </div>
+      </div>
+ 
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Priority Distribution</h3>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" id="view-priority-btn">View All</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="priorityBarChart"></canvas>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="table-container">
+      <div class="card-header">
+        <h3 class="card-title">Recent Tasks</h3>
+        <div class="card-actions">
+          <button class="btn btn-primary btn-sm" id="add-task-btn">Add Task</button>
+          <div class="filter-dropdown">
+            <button class="btn btn-outline btn-sm">Filter</button>
+            <div class="filter-content" id="filter-dropdown">
+              <a class="filter-option active" data-filter="all">All Tasks</a>
+              <a class="filter-option" data-filter="high">High Priority</a>
+              <a class="filter-option" data-filter="medium">Medium Priority</a>
+              <a class="filter-option" data-filter="low">Low Priority</a>
+              <a class="filter-option" data-filter="todo" >To Do</a>
+              <a class="filter-option" data-filter="progress">In Progress</a>
+              <a class="filter-option" data-filter="review">Under Review</a>
+              <a class="filter-option" data-filter="completed">Completed</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <table id="tasks-table">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="tasks-table-body">
+          <!-- Tasks will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+ 
+ 
+  <!-- Add/Edit Task Modal -->
+  <div class="modal" id="task-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Add New Task</h3>
+        <button class="close-btn" id="close-modal">&times;</button>
+      </div>
+      <form id="task-form">
+        <input type="hidden" id="task-id">
+        <div class="form-group">
+          <label for="task-name" class="form-label">Task Name</label>
+          <input type="text" class="form-control" id="task-name" required>
+        </div>
+        <div class="form-group">
+          <label for="project-id" class="form-label">Project ID</label>
+          <input type="number" class="form-control" id="project-id" required min="1" value="1">
+        </div>
+        <div class="form-group">
+          <label for="task-description" class="form-label">Description</label>
+          <textarea class="form-control" id="task-description" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task-priority" class="form-label" >Priority</label>
+          <select class="form-select" id="task-priority" required >
+            <option value="">Select Priority</option>
+            <option value="high" >High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-status" class="form-label">Status</label>
+          <select class="form-select" id="task-status" required>
+            <option value="">Select Status</option>
+            <option value="todo">To Do</option>
+            <option value="progress">In Progress</option>
+            <option value="review">Under Review</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="task-start-date" class="form-label">Start Date</label>
+          <input type="date" class="form-control" id="task-start-date" required>
+        </div>
+        <div class="form-group">
+          <label for="task-due-date" class="form-label">Due Date</label>
+          <input type="date" class="form-control" id="task-due-date" required>
+        </div>
+        <div class="form-group">
+          <label for="task-tags" class="form-label">Tags (comma separated)</label>
+          <input type="text" class="form-control" id="task-tags" placeholder="bug, fix, feature">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancel-task">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-task">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+ 
+  <!-- Delete Confirmation Modal -->
+  <div class="modal" id="delete-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Confirm Deletion</h3>
+        <button class="close-btn" id="close-delete-modal">&times;</button>
+      </div>
+      <p>Are you sure you want to delete this task?</p>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="cancel-delete">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  <script src="dashboard.js"></script>
+</body>
+</html>
